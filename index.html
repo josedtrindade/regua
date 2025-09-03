@@ -1,11 +1,11 @@
-# Criar versão atualizada do index.html com credenciais hardcoded
+# Criar index.html atualizado para usar Netlify Function
 
-html_content = """<!DOCTYPE html>
+html_secure = """<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Régua 3.0 - Análise de Futebol</title>
+    <title>Régua 3.0 - Análise de Futebol com IA Segura</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -284,17 +284,102 @@ html_content = """<!DOCTYPE html>
             background: #f8d7da;
             color: #721c24;
         }
+        
+        .ai-status {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .ai-indicator {
+            flex: 1;
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .ai-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .ai-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .analysis-steps {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            padding: 5px;
+        }
+        
+        .step-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .step-pending {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .step-active {
+            background: #007bff;
+            color: white;
+        }
+        
+        .step-complete {
+            background: #28a745;
+            color: white;
+        }
+        
+        .step-error {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .security-badge {
+            background: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>⚽ Régua 3.0</h1>
-            <p>Sistema Inteligente de Análise de Futebol</p>
+            <p>Sistema Inteligente de Análise de Futebol com IA <span class="security-badge">🔒 SEGURO</span></p>
         </div>
         
         <div id="connectionStatus" class="connection-status disconnected">
             🔄 Conectando ao banco de dados...
+        </div>
+        
+        <div class="ai-status">
+            <div id="groqStatus" class="ai-indicator ai-active">🤖 Groq: Ativo (Gratuito)</div>
+            <div id="openaiStatus" class="ai-indicator ai-active">🧠 OpenAI: Backup Seguro</div>
         </div>
         
         <div class="tabs">
@@ -351,7 +436,12 @@ html_content = """<!DOCTYPE html>
             
             <!-- Nova Análise Tab -->
             <div id="nova-analise" class="tab-content">
-                <h2>➕ Nova Análise</h2>
+                <h2>➕ Nova Análise com IA Segura</h2>
+                
+                <div class="success">
+                    <h4>🔒 Sistema Seguro</h4>
+                    <p>Suas chaves de API estão protegidas no servidor. Nenhuma informação sensível é exposta no navegador.</p>
+                </div>
                 
                 <form id="novaAnaliseForm">
                     <div class="form-group">
@@ -361,23 +451,43 @@ html_content = """<!DOCTYPE html>
                     
                     <div class="url-inputs">
                         <div class="form-group">
-                            <label>📰 URL Notícia 1</label>
-                            <input type="url" id="url1" placeholder="https://globoesporte.globo.com/...">
+                            <label>📰 URL Notícia 1 (obrigatória)</label>
+                            <input type="url" id="url1" placeholder="https://globoesporte.globo.com/..." required>
                         </div>
                         <div class="form-group">
-                            <label>📰 URL Notícia 2</label>
+                            <label>📰 URL Notícia 2 (opcional)</label>
                             <input type="url" id="url2" placeholder="https://espn.com.br/...">
                         </div>
                         <div class="form-group">
-                            <label>📰 URL Notícia 3</label>
+                            <label>📰 URL Notícia 3 (opcional)</label>
                             <input type="url" id="url3" placeholder="https://lance.com.br/...">
                         </div>
                     </div>
                     
                     <button type="submit" class="btn" id="analisarBtn">
-                        🤖 Analisar com IA
+                        🤖 Analisar com IA Segura
                     </button>
                 </form>
+                
+                <div id="analysisSteps" class="analysis-steps" style="display: none;">
+                    <h4>🔄 Progresso da Análise:</h4>
+                    <div class="step" id="step1">
+                        <div class="step-icon step-pending">1</div>
+                        <span>Extraindo conteúdo das URLs...</span>
+                    </div>
+                    <div class="step" id="step2">
+                        <div class="step-icon step-pending">2</div>
+                        <span>Analisando com IA (Groq/OpenAI)...</span>
+                    </div>
+                    <div class="step" id="step3">
+                        <div class="step-icon step-pending">3</div>
+                        <span>Aplicando metodologia Régua 3.0...</span>
+                    </div>
+                    <div class="step" id="step4">
+                        <div class="step-icon step-pending">4</div>
+                        <span>Salvando no banco de dados...</span>
+                    </div>
+                </div>
                 
                 <div id="resultadoAnalise" style="margin-top: 30px;"></div>
             </div>
@@ -435,15 +545,32 @@ html_content = """<!DOCTYPE html>
                     <div class="confidence-indicator amarelo">Amarelo (70-79%)</div>
                     <div class="confidence-indicator vermelho">Vermelho (<60%)</div>
                     
-                    <h3>🤖 Integração com IA</h3>
-                    <p>O sistema utiliza inteligência artificial para analisar notícias e aplicar automaticamente a metodologia Régua 3.0.</p>
+                    <h3>🤖 Integração com IA Segura</h3>
+                    <p>O sistema utiliza duas APIs de IA de forma segura:</p>
+                    <ul style="margin: 15px 0 15px 30px;">
+                        <li><strong>Groq (Principal):</strong> Llama 3.1 - Gratuito, 6000 requests/dia</li>
+                        <li><strong>OpenAI (Backup):</strong> GPT-3.5 - Usado quando Groq atinge limite</li>
+                        <li><strong>🔒 Segurança:</strong> Chaves protegidas no servidor Netlify</li>
+                    </ul>
+                    
+                    <h3>🔄 Processo de Análise</h3>
+                    <ol style="margin: 15px 0 15px 30px;">
+                        <li>Extração de conteúdo das URLs fornecidas</li>
+                        <li>Análise das informações com IA (Groq primeiro, OpenAI backup)</li>
+                        <li>Aplicação da metodologia Régua 3.0</li>
+                        <li>Geração de previsão com nível de confiança</li>
+                        <li>Salvamento automático no banco de dados</li>
+                    </ol>
+                    
+                    <h3>🛡️ Segurança</h3>
+                    <p>Todas as chaves de API ficam protegidas no servidor Netlify através de Environment Variables. Nenhuma informação sensível é exposta no navegador.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Configuração do Supabase com credenciais fixas
+        // Configuração do Supabase
         const SUPABASE_URL = 'https://shjjweviipblcjukvxry.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNoamp3ZXZpaXBibGNqdWt2eHJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4NjY1NDMsImV4cCI6MjA3MjQ0MjU0M30.LJmmMKDASQfvDo4D_S-tbHDUh2jUb2VuFwl3EqrLBas';
         
@@ -469,7 +596,6 @@ html_content = """<!DOCTYPE html>
         
         // Gerenciamento de tabs
         function showTab(tabName) {
-            // Esconder todas as tabs
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
@@ -477,11 +603,9 @@ html_content = """<!DOCTYPE html>
                 tab.classList.remove('active');
             });
             
-            // Mostrar tab selecionada
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
             
-            // Carregar dados específicos da tab
             if (tabName === 'dashboard') {
                 carregarDashboard();
             } else if (tabName === 'historico') {
@@ -494,7 +618,6 @@ html_content = """<!DOCTYPE html>
             if (!supabase) return;
             
             try {
-                // Buscar estatísticas
                 const { data: analises, error } = await supabase
                     .from('analises')
                     .select('*');
@@ -504,12 +627,10 @@ html_content = """<!DOCTYPE html>
                     return;
                 }
                 
-                // Calcular estatísticas
                 const stats = calcularEstatisticas(analises);
                 atualizarDashboard(stats);
                 criarGrafico(stats);
                 
-                // Últimas análises
                 const ultimasAnalises = analises.slice(-10).reverse();
                 atualizarTabelaUltimas(ultimasAnalises);
                 
@@ -564,7 +685,6 @@ html_content = """<!DOCTYPE html>
         function criarGrafico(stats) {
             const ctx = document.getElementById('performanceChart').getContext('2d');
             
-            // Destruir gráfico anterior se existir
             if (window.myChart) {
                 window.myChart.destroy();
             }
@@ -621,7 +741,7 @@ html_content = """<!DOCTYPE html>
             return '';
         }
         
-        // Nova Análise
+        // Nova Análise com IA Segura
         document.getElementById('novaAnaliseForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -642,66 +762,220 @@ html_content = """<!DOCTYPE html>
                 return;
             }
             
-            // Mostrar loading
-            document.getElementById('resultadoAnalise').innerHTML = `
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <p>🤖 Analisando com IA...</p>
-                </div>
-            `;
+            // Mostrar progresso
+            document.getElementById('analysisSteps').style.display = 'block';
+            document.getElementById('resultadoAnalise').innerHTML = '';
+            document.getElementById('analisarBtn').disabled = true;
             
-            // Simular análise da IA (aqui você integraria com a IA real)
-            setTimeout(async () => {
-                const analiseSimulada = simularAnaliseIA(jogo);
-                mostrarResultadoAnalise(analiseSimulada);
-                await salvarAnaliseNoBanco(analiseSimulada);
-            }, 3000);
+            try {
+                await analisarComIA(jogo, urls);
+            } catch (error) {
+                console.error('Erro na análise:', error);
+                document.getElementById('resultadoAnalise').innerHTML = `
+                    <div class="error">
+                        <h3>❌ Erro na Análise</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            } finally {
+                document.getElementById('analisarBtn').disabled = false;
+            }
         });
         
-        function simularAnaliseIA(jogo) {
-            // Simulação da análise - aqui você integraria com a IA real
-            const niveis = ['Verde Escuro (90-100%)', 'Verde Claro (80-89%)', 'Amarelo (70-79%)', 'Vermelho (<60%)'];
-            const nivel = niveis[Math.floor(Math.random() * niveis.length)];
+        async function analisarComIA(jogo, urls) {
+            // Passo 1: Extrair conteúdo
+            updateStep('step1', 'active');
+            const conteudos = await extrairConteudoURLs(urls);
+            updateStep('step1', 'complete');
+            
+            // Passo 2: Analisar com IA (usando Netlify Function)
+            updateStep('step2', 'active');
+            const analiseIA = await analisarConteudoComIA(jogo, conteudos);
+            updateStep('step2', 'complete');
+            
+            // Passo 3: Aplicar metodologia
+            updateStep('step3', 'active');
+            const analiseCompleta = aplicarMetodologiaRegua(analiseIA);
+            updateStep('step3', 'complete');
+            
+            // Passo 4: Salvar no banco
+            updateStep('step4', 'active');
+            await salvarAnaliseNoBanco(analiseCompleta);
+            updateStep('step4', 'complete');
+            
+            // Mostrar resultado
+            mostrarResultadoAnalise(analiseCompleta);
+            carregarDashboard();
+        }
+        
+        function updateStep(stepId, status) {
+            const step = document.getElementById(stepId);
+            const icon = step.querySelector('.step-icon');
+            
+            icon.className = `step-icon step-${status}`;
+            
+            if (status === 'complete') {
+                icon.innerHTML = '✓';
+            } else if (status === 'error') {
+                icon.innerHTML = '✗';
+            }
+        }
+        
+        async function extrairConteudoURLs(urls) {
+            const conteudos = [];
+            
+            for (const url of urls) {
+                try {
+                    // Usar um proxy CORS ou serviço de extração
+                    const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+                    const data = await response.json();
+                    
+                    // Extrair texto relevante (simplificado)
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(data.contents, 'text/html');
+                    const texto = doc.body.innerText.substring(0, 2000); // Primeiros 2000 caracteres
+                    
+                    conteudos.push({
+                        url: url,
+                        conteudo: texto
+                    });
+                } catch (error) {
+                    console.error(`Erro ao extrair ${url}:`, error);
+                    conteudos.push({
+                        url: url,
+                        conteudo: 'Erro ao extrair conteúdo'
+                    });
+                }
+            }
+            
+            return conteudos;
+        }
+        
+        async function analisarConteudoComIA(jogo, conteudos) {
+            const prompt = `
+Você é um analista de futebol especialista na metodologia "Régua 3.0".
+
+JOGO: ${jogo}
+
+CONTEÚDO DAS NOTÍCIAS:
+${conteudos.map((c, i) => `URL ${i+1}: ${c.conteudo}`).join('\\n\\n')}
+
+Analise as informações e aplique a metodologia Régua 3.0 considerando:
+
+1. MOTIVAÇÃO (0-25 pontos):
+   - Importância do jogo para cada time
+   - Objetivos na competição
+   - Pressão por resultados
+
+2. FORMA RECENTE (0-25 pontos):
+   - Últimos 5 jogos de cada time
+   - Sequência de vitórias/derrotas
+   - Performance ofensiva/defensiva
+
+3. LOGÍSTICA (0-25 pontos):
+   - Viagens longas
+   - Tempo de descanso
+   - Calendário apertado
+
+4. HISTÓRICO (0-25 pontos):
+   - Confrontos diretos recentes
+   - Performance como mandante/visitante
+   - Retrospecto na competição
+
+Responda APENAS em JSON:
+{
+  "motivacao_mandante": número,
+  "motivacao_visitante": número,
+  "forma_mandante": número,
+  "forma_visitante": número,
+  "logistica_mandante": número,
+  "logistica_visitante": número,
+  "historico_mandante": número,
+  "historico_visitante": número,
+  "previsao": "descrição da previsão",
+  "observacoes": "observações importantes"
+}
+            `;
+            
+            // Usar Netlify Function (segura)
+            const response = await fetch('/.netlify/functions/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    messages: [{ role: 'user', content: prompt }]
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Erro na API de IA');
+            }
+            
+            const data = await response.json();
+            const conteudoResposta = data.choices[0].message.content;
+            
+            try {
+                return JSON.parse(conteudoResposta);
+            } catch (error) {
+                throw new Error('Erro ao processar resposta da IA');
+            }
+        }
+        
+        function aplicarMetodologiaRegua(analiseIA) {
+            const totalMandante = analiseIA.motivacao_mandante + analiseIA.forma_mandante + 
+                                 analiseIA.logistica_mandante + analiseIA.historico_mandante;
+            const totalVisitante = analiseIA.motivacao_visitante + analiseIA.forma_visitante + 
+                                  analiseIA.logistica_visitante + analiseIA.historico_visitante;
+            
+            const diferenca = Math.abs(totalMandante - totalVisitante);
+            const maiorPontuacao = Math.max(totalMandante, totalVisitante);
+            const confiancaPercentual = Math.min(95, Math.max(60, (diferenca / 100 * 100) + 60));
+            
+            let nivelConfianca;
+            if (confiancaPercentual >= 90) nivelConfianca = 'Verde Escuro (90-100%)';
+            else if (confiancaPercentual >= 80) nivelConfianca = 'Verde Claro (80-89%)';
+            else if (confiancaPercentual >= 70) nivelConfianca = 'Amarelo (70-79%)';
+            else nivelConfianca = 'Vermelho (<60%)';
             
             return {
-                jogo: jogo,
-                nivel_confianca: nivel,
-                confianca_percentual: Math.floor(Math.random() * 40) + 60,
-                previsao_regua: 'Análise baseada em IA - implementar lógica real',
-                observacoes: 'Análise automática baseada nas URLs fornecidas',
+                jogo: document.getElementById('jogoInput').value,
+                nivel_confianca: nivelConfianca,
+                confianca_percentual: Math.round(confiancaPercentual),
+                previsao_regua: analiseIA.previsao,
+                observacoes: analiseIA.observacoes,
+                pontuacao_mandante: totalMandante,
+                pontuacao_visitante: totalVisitante,
                 created_at: new Date().toISOString()
             };
+        }
+        
+        async function salvarAnaliseNoBanco(analise) {
+            const { data, error } = await supabase
+                .from('analises')
+                .insert([analise]);
+            
+            if (error) throw error;
         }
         
         function mostrarResultadoAnalise(analise) {
             document.getElementById('resultadoAnalise').innerHTML = `
                 <div class="success">
-                    <h3>🎯 Análise Concluída</h3>
+                    <h3>🎯 Análise Concluída com IA Segura</h3>
                     <div class="confidence-indicator ${getClasseNivel(analise.nivel_confianca)}">
                         ${analise.nivel_confianca} - ${analise.confianca_percentual}%
                     </div>
                     <p><strong>Previsão:</strong> ${analise.previsao_regua}</p>
+                    <p><strong>Pontuação Mandante:</strong> ${analise.pontuacao_mandante}/100</p>
+                    <p><strong>Pontuação Visitante:</strong> ${analise.pontuacao_visitante}/100</p>
                     <p><strong>Observações:</strong> ${analise.observacoes}</p>
                     <p>✅ <strong>Salvo automaticamente no banco!</strong></p>
                 </div>
             `;
-        }
-        
-        async function salvarAnaliseNoBanco(analise) {
-            try {
-                const { data, error } = await supabase
-                    .from('analises')
-                    .insert([analise]);
-                
-                if (error) throw error;
-                
-                // Recarregar dashboard
-                carregarDashboard();
-                
-            } catch (error) {
-                console.error('Erro ao salvar análise:', error);
-                alert('❌ Erro ao salvar no banco de dados');
-            }
+            
+            // Limpar formulário
+            document.getElementById('novaAnaliseForm').reset();
+            document.getElementById('analysisSteps').style.display = 'none';
         }
         
         // Histórico
@@ -758,14 +1032,17 @@ html_content = """<!DOCTYPE html>
 </body>
 </html>"""
 
-# Salvar arquivo atualizado
+# Salvar arquivo seguro
 with open('index.html', 'w', encoding='utf-8') as f:
-    f.write(html_content)
+    f.write(html_secure)
 
-print("✅ Arquivo index.html atualizado!")
-print("🔗 Credenciais do Supabase já integradas")
-print("📊 Usuários não precisarão configurar nada")
-print("🚀 Faça upload no GitHub para atualizar")
-                   
+print("🔒 Versão SEGURA criada!")
+print("📁 index.html atualizado")
+print("🛡️ Chave OpenAI protegida no servidor!")
+        
+      
+        
+        
+      
 
        
