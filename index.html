@@ -1,11 +1,11 @@
-# Criar index.html atualizado para usar Netlify Function
+# Atualizar index.html para mostrar só OpenAI
 
-html_secure = """<!DOCTYPE html>
+html_openai_only = """<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Régua 3.0 - Análise de Futebol com IA Segura</title>
+    <title>Régua 3.0 - Análise de Futebol com OpenAI</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -370,7 +370,7 @@ html_secure = """<!DOCTYPE html>
     <div class="container">
         <div class="header">
             <h1>⚽ Régua 3.0</h1>
-            <p>Sistema Inteligente de Análise de Futebol com IA <span class="security-badge">🔒 SEGURO</span></p>
+            <p>Sistema Inteligente de Análise de Futebol com OpenAI <span class="security-badge">🔒 SEGURO</span></p>
         </div>
         
         <div id="connectionStatus" class="connection-status disconnected">
@@ -378,8 +378,7 @@ html_secure = """<!DOCTYPE html>
         </div>
         
         <div class="ai-status">
-            <div id="groqStatus" class="ai-indicator ai-active">🤖 Groq: Ativo (Gratuito)</div>
-            <div id="openaiStatus" class="ai-indicator ai-active">🧠 OpenAI: Backup Seguro</div>
+            <div id="openaiStatus" class="ai-indicator ai-active">🧠 OpenAI GPT-3.5: Ativo e Seguro</div>
         </div>
         
         <div class="tabs">
@@ -436,11 +435,11 @@ html_secure = """<!DOCTYPE html>
             
             <!-- Nova Análise Tab -->
             <div id="nova-analise" class="tab-content">
-                <h2>➕ Nova Análise com IA Segura</h2>
+                <h2>➕ Nova Análise com OpenAI</h2>
                 
                 <div class="success">
                     <h4>🔒 Sistema Seguro</h4>
-                    <p>Suas chaves de API estão protegidas no servidor. Nenhuma informação sensível é exposta no navegador.</p>
+                    <p>Sua chave OpenAI está protegida no servidor Netlify. Nenhuma informação sensível é exposta no navegador.</p>
                 </div>
                 
                 <form id="novaAnaliseForm">
@@ -465,7 +464,7 @@ html_secure = """<!DOCTYPE html>
                     </div>
                     
                     <button type="submit" class="btn" id="analisarBtn">
-                        🤖 Analisar com IA Segura
+                        🧠 Analisar com OpenAI
                     </button>
                 </form>
                 
@@ -477,7 +476,7 @@ html_secure = """<!DOCTYPE html>
                     </div>
                     <div class="step" id="step2">
                         <div class="step-icon step-pending">2</div>
-                        <span>Analisando com IA (Groq/OpenAI)...</span>
+                        <span>Analisando com OpenAI GPT-3.5...</span>
                     </div>
                     <div class="step" id="step3">
                         <div class="step-icon step-pending">3</div>
@@ -545,25 +544,25 @@ html_secure = """<!DOCTYPE html>
                     <div class="confidence-indicator amarelo">Amarelo (70-79%)</div>
                     <div class="confidence-indicator vermelho">Vermelho (<60%)</div>
                     
-                    <h3>🤖 Integração com IA Segura</h3>
-                    <p>O sistema utiliza duas APIs de IA de forma segura:</p>
+                    <h3>🧠 Integração com OpenAI</h3>
+                    <p>O sistema utiliza OpenAI GPT-3.5 de forma segura:</p>
                     <ul style="margin: 15px 0 15px 30px;">
-                        <li><strong>Groq (Principal):</strong> Llama 3.1 - Gratuito, 6000 requests/dia</li>
-                        <li><strong>OpenAI (Backup):</strong> GPT-3.5 - Usado quando Groq atinge limite</li>
-                        <li><strong>🔒 Segurança:</strong> Chaves protegidas no servidor Netlify</li>
+                        <li><strong>GPT-3.5 Turbo:</strong> Modelo avançado para análise de futebol</li>
+                        <li><strong>🔒 Segurança:</strong> Chave protegida no servidor Netlify</li>
+                        <li><strong>⚡ Performance:</strong> Respostas rápidas e precisas</li>
                     </ul>
                     
                     <h3>🔄 Processo de Análise</h3>
                     <ol style="margin: 15px 0 15px 30px;">
                         <li>Extração de conteúdo das URLs fornecidas</li>
-                        <li>Análise das informações com IA (Groq primeiro, OpenAI backup)</li>
+                        <li>Análise das informações com OpenAI GPT-3.5</li>
                         <li>Aplicação da metodologia Régua 3.0</li>
                         <li>Geração de previsão com nível de confiança</li>
                         <li>Salvamento automático no banco de dados</li>
                     </ol>
                     
                     <h3>🛡️ Segurança</h3>
-                    <p>Todas as chaves de API ficam protegidas no servidor Netlify através de Environment Variables. Nenhuma informação sensível é exposta no navegador.</p>
+                    <p>Sua chave OpenAI fica protegida no servidor Netlify através de Environment Variables. Nenhuma informação sensível é exposta no navegador.</p>
                 </div>
             </div>
         </div>
@@ -741,7 +740,7 @@ html_secure = """<!DOCTYPE html>
             return '';
         }
         
-        // Nova Análise com IA Segura
+        // Nova Análise com OpenAI
         document.getElementById('novaAnaliseForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -775,6 +774,7 @@ html_secure = """<!DOCTYPE html>
                     <div class="error">
                         <h3>❌ Erro na Análise</h3>
                         <p>${error.message}</p>
+                        <p><small>Verifique se a chave OpenAI está configurada corretamente no Netlify.</small></p>
                     </div>
                 `;
             } finally {
@@ -788,7 +788,7 @@ html_secure = """<!DOCTYPE html>
             const conteudos = await extrairConteudoURLs(urls);
             updateStep('step1', 'complete');
             
-            // Passo 2: Analisar com IA (usando Netlify Function)
+            // Passo 2: Analisar com OpenAI
             updateStep('step2', 'active');
             const analiseIA = await analisarConteudoComIA(jogo, conteudos);
             updateStep('step2', 'complete');
@@ -897,7 +897,7 @@ Responda APENAS em JSON:
 }
             `;
             
-            // Usar Netlify Function (segura)
+            // Usar Netlify Function (segura) - só OpenAI
             const response = await fetch('/.netlify/functions/analyze', {
                 method: 'POST',
                 headers: {
@@ -909,7 +909,8 @@ Responda APENAS em JSON:
             });
             
             if (!response.ok) {
-                throw new Error('Erro na API de IA');
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Erro na API OpenAI');
             }
             
             const data = await response.json();
@@ -918,7 +919,7 @@ Responda APENAS em JSON:
             try {
                 return JSON.parse(conteudoResposta);
             } catch (error) {
-                throw new Error('Erro ao processar resposta da IA');
+                throw new Error('Erro ao processar resposta da OpenAI');
             }
         }
         
@@ -961,7 +962,7 @@ Responda APENAS em JSON:
         function mostrarResultadoAnalise(analise) {
             document.getElementById('resultadoAnalise').innerHTML = `
                 <div class="success">
-                    <h3>🎯 Análise Concluída com IA Segura</h3>
+                    <h3>🎯 Análise Concluída com OpenAI</h3>
                     <div class="confidence-indicator ${getClasseNivel(analise.nivel_confianca)}">
                         ${analise.nivel_confianca} - ${analise.confianca_percentual}%
                     </div>
@@ -1032,17 +1033,10 @@ Responda APENAS em JSON:
 </body>
 </html>"""
 
-# Salvar arquivo seguro
+# Salvar arquivo atualizado
 with open('index.html', 'w', encoding='utf-8') as f:
-    f.write(html_secure)
+    f.write(html_openai_only)
 
-print("🔒 Versão SEGURA criada!")
+print("🧠 Versão OpenAI-only criada!")
 print("📁 index.html atualizado")
-print("🛡️ Chave OpenAI protegida no servidor!")
-        
-      
-        
-        
-      
-
-       
+print("🔧 Mais simples e direto!")
