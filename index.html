@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+# Criar versão atualizada do index.html com credenciais hardcoded
+
+html_content = """<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -12,36 +14,36 @@
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             color: #333;
         }
-
+        
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-
+        
         .header {
             text-align: center;
             color: white;
             margin-bottom: 30px;
         }
-
+        
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
         }
-
+        
         .header p {
             font-size: 1.2rem;
             opacity: 0.9;
         }
-
+        
         .tabs {
             display: flex;
             background: white;
@@ -50,7 +52,7 @@
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-
+        
         .tab {
             flex: 1;
             padding: 15px 20px;
@@ -61,17 +63,17 @@
             font-weight: 600;
             transition: all 0.3s;
         }
-
+        
         .tab.active {
             background: #667eea;
             color: white;
         }
-
+        
         .tab:hover {
             background: #5a6fd8;
             color: white;
         }
-
+        
         .content {
             background: white;
             border-radius: 10px;
@@ -79,22 +81,22 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             min-height: 500px;
         }
-
+        
         .tab-content {
             display: none;
         }
-
+        
         .tab-content.active {
             display: block;
         }
-
+        
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
-
+        
         .stat-card {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
@@ -102,27 +104,27 @@
             border-radius: 10px;
             text-align: center;
         }
-
+        
         .stat-card h3 {
             font-size: 2rem;
             margin-bottom: 5px;
         }
-
+        
         .stat-card p {
             opacity: 0.9;
         }
-
+        
         .form-group {
             margin-bottom: 20px;
         }
-
+        
         .form-group label {
             display: block;
             margin-bottom: 5px;
             font-weight: 600;
             color: #333;
         }
-
+        
         .form-group input,
         .form-group textarea,
         .form-group select {
@@ -133,14 +135,14 @@
             font-size: 1rem;
             transition: border-color 0.3s;
         }
-
+        
         .form-group input:focus,
         .form-group textarea:focus,
         .form-group select:focus {
             outline: none;
             border-color: #667eea;
         }
-
+        
         .btn {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
@@ -152,23 +154,23 @@
             cursor: pointer;
             transition: transform 0.2s;
         }
-
+        
         .btn:hover {
             transform: translateY(-2px);
         }
-
+        
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
-
+        
         .url-inputs {
             display: grid;
             gap: 15px;
             margin-bottom: 20px;
         }
-
+        
         .confidence-indicator {
             padding: 10px;
             border-radius: 8px;
@@ -176,32 +178,32 @@
             font-weight: 600;
             text-align: center;
         }
-
+        
         .verde-escuro {
             background: #28a745;
             color: white;
         }
-
+        
         .verde-claro {
             background: #6f9654;
             color: white;
         }
-
+        
         .amarelo {
             background: #ffc107;
             color: #333;
         }
-
+        
         .vermelho {
             background: #dc3545;
             color: white;
         }
-
+        
         .loading {
             text-align: center;
             padding: 20px;
         }
-
+        
         .spinner {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #667eea;
@@ -211,44 +213,44 @@
             animation: spin 1s linear infinite;
             margin: 0 auto;
         }
-
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
+        
         .chart-container {
             position: relative;
             height: 400px;
             margin: 20px 0;
         }
-
+        
         .table-container {
             overflow-x: auto;
             margin-top: 20px;
         }
-
+        
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
-
+        
         th, td {
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
-
+        
         th {
             background: #f8f9fa;
             font-weight: 600;
         }
-
+        
         tr:hover {
             background: #f8f9fa;
         }
-
+        
         .success {
             background: #d4edda;
             color: #155724;
@@ -256,13 +258,31 @@
             border-radius: 8px;
             margin: 10px 0;
         }
-
+        
         .error {
             background: #f8d7da;
             color: #721c24;
             padding: 15px;
             border-radius: 8px;
             margin: 10px 0;
+        }
+        
+        .connection-status {
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .connected {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .disconnected {
+            background: #f8d7da;
+            color: #721c24;
         }
     </style>
 </head>
@@ -272,19 +292,23 @@
             <h1>⚽ Régua 3.0</h1>
             <p>Sistema Inteligente de Análise de Futebol</p>
         </div>
-
+        
+        <div id="connectionStatus" class="connection-status disconnected">
+            🔄 Conectando ao banco de dados...
+        </div>
+        
         <div class="tabs">
             <button class="tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
             <button class="tab" onclick="showTab('nova-analise')">➕ Nova Análise</button>
             <button class="tab" onclick="showTab('historico')">📋 Histórico</button>
-            <button class="tab" onclick="showTab('configuracoes')">⚙️ Config</button>
+            <button class="tab" onclick="showTab('sobre')">ℹ️ Sobre</button>
         </div>
-
+        
         <div class="content">
             <!-- Dashboard Tab -->
             <div id="dashboard" class="tab-content active">
                 <h2>📊 Performance da Régua 3.0</h2>
-
+                
                 <div class="stats-grid" id="statsGrid">
                     <div class="stat-card">
                         <h3 id="totalJogos">-</h3>
@@ -303,11 +327,11 @@
                         <p>Verde Claro</p>
                     </div>
                 </div>
-
+                
                 <div class="chart-container">
                     <canvas id="performanceChart"></canvas>
                 </div>
-
+                
                 <div class="table-container">
                     <h3>🎯 Últimas Análises</h3>
                     <table id="ultimasAnalises">
@@ -324,17 +348,17 @@
                     </table>
                 </div>
             </div>
-
+            
             <!-- Nova Análise Tab -->
             <div id="nova-analise" class="tab-content">
                 <h2>➕ Nova Análise</h2>
-
+                
                 <form id="novaAnaliseForm">
                     <div class="form-group">
                         <label>🏆 Jogo (ex: Flamengo x Palmeiras)</label>
                         <input type="text" id="jogoInput" placeholder="Time Mandante x Time Visitante" required>
                     </div>
-
+                    
                     <div class="url-inputs">
                         <div class="form-group">
                             <label>📰 URL Notícia 1</label>
@@ -349,19 +373,19 @@
                             <input type="url" id="url3" placeholder="https://lance.com.br/...">
                         </div>
                     </div>
-
+                    
                     <button type="submit" class="btn" id="analisarBtn">
                         🤖 Analisar com IA
                     </button>
                 </form>
-
+                
                 <div id="resultadoAnalise" style="margin-top: 30px;"></div>
             </div>
-
+            
             <!-- Histórico Tab -->
             <div id="historico" class="tab-content">
                 <h2>📋 Histórico Completo</h2>
-
+                
                 <div class="form-group">
                     <label>🔍 Filtrar por Nível</label>
                     <select id="filtroNivel" onchange="filtrarHistorico()">
@@ -372,7 +396,7 @@
                         <option value="Vermelho">Vermelho (<60%)</option>
                     </select>
                 </div>
-
+                
                 <div class="table-container">
                     <table id="historicoCompleto">
                         <thead>
@@ -390,49 +414,59 @@
                     </table>
                 </div>
             </div>
-
-            <!-- Configurações Tab -->
-            <div id="configuracoes" class="tab-content">
-                <h2>⚙️ Configurações</h2>
-
-                <div class="form-group">
-                    <label>🔑 Supabase URL</label>
-                    <input type="text" id="supabaseUrl" placeholder="https://seu-projeto.supabase.co">
-                </div>
-
-                <div class="form-group">
-                    <label>🔐 Supabase Anon Key</label>
-                    <input type="password" id="supabaseKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
-                </div>
-
-                <button class="btn" onclick="salvarConfig()">💾 Salvar Configuração</button>
-
-                <div style="margin-top: 30px;">
-                    <h3>📖 Como usar:</h3>
-                    <ol style="margin-left: 20px; line-height: 1.6;">
-                        <li>Configure suas credenciais do Supabase</li>
-                        <li>Veja o dashboard com suas estatísticas</li>
-                        <li>Crie novas análises inserindo URLs de notícias</li>
-                        <li>A IA aplicará a metodologia Régua 3.0 automaticamente</li>
-                    </ol>
+            
+            <!-- Sobre Tab -->
+            <div id="sobre" class="tab-content">
+                <h2>ℹ️ Sobre a Régua 3.0</h2>
+                
+                <div style="line-height: 1.6;">
+                    <h3>🎯 Metodologia</h3>
+                    <p>Sistema de análise de futebol baseado em dupla camada de critérios:</p>
+                    <ul style="margin: 15px 0 15px 30px;">
+                        <li><strong>Motivação:</strong> Importância do jogo para cada time</li>
+                        <li><strong>Forma Recente:</strong> Performance dos últimos jogos</li>
+                        <li><strong>Logística:</strong> Viagens, descanso, calendário</li>
+                        <li><strong>Histórico:</strong> Confrontos diretos</li>
+                    </ul>
+                    
+                    <h3>📊 Níveis de Confiança</h3>
+                    <div class="confidence-indicator verde-escuro">Verde Escuro (90-100%)</div>
+                    <div class="confidence-indicator verde-claro">Verde Claro (80-89%)</div>
+                    <div class="confidence-indicator amarelo">Amarelo (70-79%)</div>
+                    <div class="confidence-indicator vermelho">Vermelho (<60%)</div>
+                    
+                    <h3>🤖 Integração com IA</h3>
+                    <p>O sistema utiliza inteligência artificial para analisar notícias e aplicar automaticamente a metodologia Régua 3.0.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Configuração do Supabase
+        // Configuração do Supabase com credenciais fixas
+        const SUPABASE_URL = 'https://shjjweviipblcjukvxry.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNoamp3ZXZpaXBibGNqdWt2eHJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4NjY1NDMsImV4cCI6MjA3MjQ0MjU0M30.LJmmMKDASQfvDo4D_S-tbHDUh2jUb2VuFwl3EqrLBas';
+        
         let supabase = null;
-
+        
         // Inicializar app
         document.addEventListener('DOMContentLoaded', function() {
-            carregarConfig();
-            if (supabase) {
-                carregarDashboard();
-                carregarHistorico();
-            }
+            inicializarSupabase();
+            carregarDashboard();
         });
-
+        
+        function inicializarSupabase() {
+            try {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                document.getElementById('connectionStatus').innerHTML = '✅ Conectado ao banco de dados';
+                document.getElementById('connectionStatus').className = 'connection-status connected';
+            } catch (error) {
+                console.error('Erro ao conectar:', error);
+                document.getElementById('connectionStatus').innerHTML = '❌ Erro na conexão com banco';
+                document.getElementById('connectionStatus').className = 'connection-status disconnected';
+            }
+        }
+        
         // Gerenciamento de tabs
         function showTab(tabName) {
             // Esconder todas as tabs
@@ -442,11 +476,11 @@
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
-
+            
             // Mostrar tab selecionada
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
-
+            
             // Carregar dados específicos da tab
             if (tabName === 'dashboard') {
                 carregarDashboard();
@@ -454,63 +488,36 @@
                 carregarHistorico();
             }
         }
-
-        // Configuração do Supabase
-        function carregarConfig() {
-            const url = localStorage.getItem('supabaseUrl');
-            const key = localStorage.getItem('supabaseKey');
-
-            if (url && key) {
-                document.getElementById('supabaseUrl').value = url;
-                document.getElementById('supabaseKey').value = key;
-                inicializarSupabase(url, key);
-            }
-        }
-
-        function salvarConfig() {
-            const url = document.getElementById('supabaseUrl').value;
-            const key = document.getElementById('supabaseKey').value;
-
-            if (url && key) {
-                localStorage.setItem('supabaseUrl', url);
-                localStorage.setItem('supabaseKey', key);
-                inicializarSupabase(url, key);
-                alert('✅ Configuração salva com sucesso!');
-            } else {
-                alert('❌ Preencha URL e Key do Supabase');
-            }
-        }
-
-        function inicializarSupabase(url, key) {
-            supabase = window.supabase.createClient(url, key);
-        }
-
+        
         // Dashboard
         async function carregarDashboard() {
             if (!supabase) return;
-
+            
             try {
                 // Buscar estatísticas
                 const { data: analises, error } = await supabase
                     .from('analises')
                     .select('*');
-
-                if (error) throw error;
-
+                
+                if (error) {
+                    console.error('Erro ao buscar análises:', error);
+                    return;
+                }
+                
                 // Calcular estatísticas
                 const stats = calcularEstatisticas(analises);
                 atualizarDashboard(stats);
                 criarGrafico(stats);
-
+                
                 // Últimas análises
                 const ultimasAnalises = analises.slice(-10).reverse();
                 atualizarTabelaUltimas(ultimasAnalises);
-
+                
             } catch (error) {
                 console.error('Erro ao carregar dashboard:', error);
             }
         }
-
+        
         function calcularEstatisticas(analises) {
             const stats = {
                 total: analises.length,
@@ -520,12 +527,12 @@
                 amarelo: { total: 0, acertos: 0 },
                 vermelho: { total: 0, acertos: 0 }
             };
-
+            
             analises.forEach(analise => {
                 const acertou = analise.acerto && (analise.acerto.includes('✅') || analise.acerto.includes('Pleno'));
                 if (acertou) stats.acertos++;
-
-                const nivel = analise.nivel_confianca;
+                
+                const nivel = analise.nivel_confianca || '';
                 if (nivel.includes('Verde Escuro')) {
                     stats.verdeEscuro.total++;
                     if (acertou) stats.verdeEscuro.acertos++;
@@ -540,34 +547,39 @@
                     if (acertou) stats.vermelho.acertos++;
                 }
             });
-
+            
             return stats;
         }
-
+        
         function atualizarDashboard(stats) {
             document.getElementById('totalJogos').textContent = stats.total;
             document.getElementById('taxaAcerto').textContent = 
-                Math.round((stats.acertos / stats.total) * 100) + '%';
+                stats.total > 0 ? Math.round((stats.acertos / stats.total) * 100) + '%' : '0%';
             document.getElementById('verdeEscuroAcerto').textContent = 
-                Math.round((stats.verdeEscuro.acertos / stats.verdeEscuro.total) * 100) + '%';
+                stats.verdeEscuro.total > 0 ? Math.round((stats.verdeEscuro.acertos / stats.verdeEscuro.total) * 100) + '%' : '0%';
             document.getElementById('verdeClaroAcerto').textContent = 
-                Math.round((stats.verdeClaro.acertos / stats.verdeClaro.total) * 100) + '%';
+                stats.verdeClaro.total > 0 ? Math.round((stats.verdeClaro.acertos / stats.verdeClaro.total) * 100) + '%' : '0%';
         }
-
+        
         function criarGrafico(stats) {
             const ctx = document.getElementById('performanceChart').getContext('2d');
-
-            new Chart(ctx, {
+            
+            // Destruir gráfico anterior se existir
+            if (window.myChart) {
+                window.myChart.destroy();
+            }
+            
+            window.myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: ['Verde Escuro', 'Verde Claro', 'Amarelo', 'Vermelho'],
                     datasets: [{
                         label: 'Taxa de Acerto (%)',
                         data: [
-                            Math.round((stats.verdeEscuro.acertos / stats.verdeEscuro.total) * 100),
-                            Math.round((stats.verdeClaro.acertos / stats.verdeClaro.total) * 100),
-                            Math.round((stats.amarelo.acertos / stats.amarelo.total) * 100),
-                            Math.round((stats.vermelho.acertos / stats.vermelho.total) * 100)
+                            stats.verdeEscuro.total > 0 ? Math.round((stats.verdeEscuro.acertos / stats.verdeEscuro.total) * 100) : 0,
+                            stats.verdeClaro.total > 0 ? Math.round((stats.verdeClaro.acertos / stats.verdeClaro.total) * 100) : 0,
+                            stats.amarelo.total > 0 ? Math.round((stats.amarelo.acertos / stats.amarelo.total) * 100) : 0,
+                            stats.vermelho.total > 0 ? Math.round((stats.vermelho.acertos / stats.vermelho.total) * 100) : 0
                         ],
                         backgroundColor: ['#28a745', '#6f9654', '#ffc107', '#dc3545']
                     }]
@@ -584,23 +596,23 @@
                 }
             });
         }
-
+        
         function atualizarTabelaUltimas(analises) {
             const tbody = document.querySelector('#ultimasAnalises tbody');
             tbody.innerHTML = '';
-
+            
             analises.forEach(analise => {
                 const row = tbody.insertRow();
                 row.innerHTML = `
-                    <td>${analise.jogo}</td>
-                    <td><span class="confidence-indicator ${getClasseNivel(analise.nivel_confianca)}">${analise.nivel_confianca}</span></td>
-                    <td>${analise.previsao_regua}</td>
+                    <td>${analise.jogo || '-'}</td>
+                    <td><span class="confidence-indicator ${getClasseNivel(analise.nivel_confianca || '')}">${analise.nivel_confianca || '-'}</span></td>
+                    <td>${analise.previsao_regua || '-'}</td>
                     <td>${analise.resultado_real || '-'}</td>
                     <td>${analise.acerto || '-'}</td>
                 `;
             });
         }
-
+        
         function getClasseNivel(nivel) {
             if (nivel.includes('Verde Escuro')) return 'verde-escuro';
             if (nivel.includes('Verde Claro')) return 'verde-claro';
@@ -608,28 +620,28 @@
             if (nivel.includes('Vermelho')) return 'vermelho';
             return '';
         }
-
+        
         // Nova Análise
         document.getElementById('novaAnaliseForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-
+            
             if (!supabase) {
-                alert('❌ Configure o Supabase primeiro!');
+                alert('❌ Erro na conexão com banco de dados!');
                 return;
             }
-
+            
             const jogo = document.getElementById('jogoInput').value;
             const urls = [
                 document.getElementById('url1').value,
                 document.getElementById('url2').value,
                 document.getElementById('url3').value
             ].filter(url => url.trim());
-
+            
             if (urls.length === 0) {
                 alert('❌ Adicione pelo menos uma URL de notícia!');
                 return;
             }
-
+            
             // Mostrar loading
             document.getElementById('resultadoAnalise').innerHTML = `
                 <div class="loading">
@@ -637,28 +649,30 @@
                     <p>🤖 Analisando com IA...</p>
                 </div>
             `;
-
+            
             // Simular análise da IA (aqui você integraria com a IA real)
-            setTimeout(() => {
+            setTimeout(async () => {
                 const analiseSimulada = simularAnaliseIA(jogo);
                 mostrarResultadoAnalise(analiseSimulada);
+                await salvarAnaliseNoBanco(analiseSimulada);
             }, 3000);
         });
-
+        
         function simularAnaliseIA(jogo) {
             // Simulação da análise - aqui você integraria com a IA real
             const niveis = ['Verde Escuro (90-100%)', 'Verde Claro (80-89%)', 'Amarelo (70-79%)', 'Vermelho (<60%)'];
             const nivel = niveis[Math.floor(Math.random() * niveis.length)];
-
+            
             return {
                 jogo: jogo,
                 nivel_confianca: nivel,
                 confianca_percentual: Math.floor(Math.random() * 40) + 60,
                 previsao_regua: 'Análise baseada em IA - implementar lógica real',
-                observacoes: 'Análise automática baseada nas URLs fornecidas'
+                observacoes: 'Análise automática baseada nas URLs fornecidas',
+                created_at: new Date().toISOString()
             };
         }
-
+        
         function mostrarResultadoAnalise(analise) {
             document.getElementById('resultadoAnalise').innerHTML = `
                 <div class="success">
@@ -668,57 +682,69 @@
                     </div>
                     <p><strong>Previsão:</strong> ${analise.previsao_regua}</p>
                     <p><strong>Observações:</strong> ${analise.observacoes}</p>
-                    <button class="btn" onclick="salvarAnalise()">💾 Salvar no Banco</button>
+                    <p>✅ <strong>Salvo automaticamente no banco!</strong></p>
                 </div>
             `;
         }
-
-        async function salvarAnalise() {
-            // Implementar salvamento no Supabase
-            alert('✅ Análise salva com sucesso!');
+        
+        async function salvarAnaliseNoBanco(analise) {
+            try {
+                const { data, error } = await supabase
+                    .from('analises')
+                    .insert([analise]);
+                
+                if (error) throw error;
+                
+                // Recarregar dashboard
+                carregarDashboard();
+                
+            } catch (error) {
+                console.error('Erro ao salvar análise:', error);
+                alert('❌ Erro ao salvar no banco de dados');
+            }
         }
-
+        
         // Histórico
         async function carregarHistorico() {
             if (!supabase) return;
-
+            
             try {
                 const { data: analises, error } = await supabase
                     .from('analises')
                     .select('*')
                     .order('created_at', { ascending: false });
-
+                
                 if (error) throw error;
-
+                
                 atualizarTabelaHistorico(analises);
-
+                
             } catch (error) {
                 console.error('Erro ao carregar histórico:', error);
             }
         }
-
+        
         function atualizarTabelaHistorico(analises) {
             const tbody = document.querySelector('#historicoCompleto tbody');
             tbody.innerHTML = '';
-
+            
             analises.forEach(analise => {
                 const row = tbody.insertRow();
                 row.innerHTML = `
-                    <td>${analise.jogo}</td>
-                    <td><span class="confidence-indicator ${getClasseNivel(analise.nivel_confianca)}">${analise.nivel_confianca}</span></td>
+                    <td>${analise.jogo || '-'}</td>
+                    <td><span class="confidence-indicator ${getClasseNivel(analise.nivel_confianca || '')}">${analise.nivel_confianca || '-'}</span></td>
                     <td>${analise.confianca_percentual || '-'}</td>
-                    <td>${analise.previsao_regua}</td>
+                    <td>${analise.previsao_regua || '-'}</td>
                     <td>${analise.resultado_real || '-'}</td>
                     <td>${analise.acerto || '-'}</td>
                     <td>${analise.observacoes || '-'}</td>
                 `;
             });
         }
-
+        
         function filtrarHistorico() {
             const filtro = document.getElementById('filtroNivel').value;
             const rows = document.querySelectorAll('#historicoCompleto tbody tr');
-
+            
             rows.forEach(row => {
                 const nivel = row.cells[1].textContent;
                 if (!filtro || nivel.includes(filtro)) {
@@ -730,4 +756,16 @@
         }
     </script>
 </body>
-</html>
+</html>"""
+
+# Salvar arquivo atualizado
+with open('index.html', 'w', encoding='utf-8') as f:
+    f.write(html_content)
+
+print("✅ Arquivo index.html atualizado!")
+print("🔗 Credenciais do Supabase já integradas")
+print("📊 Usuários não precisarão configurar nada")
+print("🚀 Faça upload no GitHub para atualizar")
+                   
+
+       
