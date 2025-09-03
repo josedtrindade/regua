@@ -1,0 +1,16 @@
+{
+  "name": "regua-3.0",
+  "version": "1.0.0",
+  "description": "Sistema inteligente de análise de futebol",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "deploy": "gh-pages -d ."
+  },
+  "keywords": ["futebol", "análise", "ia", "apostas"],
+  "author": "Seu Nome",
+  "license": "MIT",
+  "devDependencies": {
+    "gh-pages": "^3.2.3"
+  }
+}
