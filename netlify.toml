@@ -1,0 +1,29 @@
+
+[build]
+  functions = "netlify/functions"
+  command = "npm run build"
+  publish = "."
+
+[functions]
+  node_bundler = "esbuild"
+
+[functions."analyze"]
+  timeout = 60
+  memory = 1024
+
+[functions."openai-analysis"]
+  timeout = 60
+  memory = 1024
+
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+
+[context.production.environment]
+  NODE_ENV = "production"
+
+[context.development.environment]
+  NODE_ENV = "development"
