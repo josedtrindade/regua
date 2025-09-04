@@ -1,16 +1,31 @@
+
 {
-  "name": "regua-3.0",
+  "name": "regua3-netlify-functions",
   "version": "1.0.0",
-  "description": "Sistema inteligente de análise de futebol",
-  "main": "index.html",
+  "description": "Funções Netlify otimizadas para a metodologia Régua 3.0 - Análise de Dupla Camada",
+  "main": "netlify/functions/analyze.js",
   "scripts": {
-    "start": "python -m http.server 8000",
-    "deploy": "gh-pages -d ."
+    "build": "echo 'Build concluído - funções prontas para deploy'",
+    "test": "node -c netlify/functions/analyze.js && node -c netlify/functions/openai-analysis.js && echo 'Todas as funções passaram no teste de sintaxe'",
+    "dev": "netlify dev",
+    "deploy": "netlify deploy",
+    "deploy:prod": "netlify deploy --prod"
   },
-  "keywords": ["futebol", "análise", "ia", "apostas"],
-  "author": "Seu Nome",
-  "license": "MIT",
-  "devDependencies": {
-    "gh-pages": "^3.2.3"
-  }
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": "18.x"
+  },
+  "keywords": [
+    "netlify",
+    "functions",
+    "openai",
+    "futebol",
+    "analise",
+    "regua3"
+  ],
+  "author": "Régua 3.0 Team",
+  "license": "MIT"
 }
