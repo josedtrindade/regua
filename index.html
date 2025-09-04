@@ -534,7 +534,187 @@
     }
 
     async function analisarConteudoComRegua3(jogo, campeonato, conteudos, urls){
-      const promptCompleto = `...` /* (mantido igual ao seu, sem mudanças) */;
+      const promptCompleto = const promptCompleto = `Você é um Analista de Futebol Sênior, autônomo e proativo. Sua tarefa é realizar uma análise completa de uma partida de futebol usando a metodologia "Régua 3.0 - Análise de Dupla Camada".
+
+DADOS DA PARTIDA:
+Campeonato: ${campeonato}
+Partida: ${jogo}
+
+DIRETRIZES DE ANÁLISE AVANÇADA (REGRAS DE PONDERAÇÃO):
+Antes de iniciar a avaliação, você deve aplicar as seguintes diretrizes de ponderação para cenários específicos do futebol brasileiro ou internacional. Elas se sobrepõem à avaliação padrão para garantir uma análise mais precisa e sutil.
+
+Diretriz 1: "Regra do Desgaste Logístico" (Análogo à Vantagem Extrema)
+Cenário: Se uma equipe (especialmente a visitante) jogou uma partida decisiva de mata-mata no meio da semana, envolvendo uma viagem longa.
+Ação: Travar J (Logística/Fadiga) em ≤ 3/10 para essa equipe, considerar time misto/reserva em C (Desfalques) e explicitar baixa intensidade que aumenta chance de resultado surpreendente.
+
+Diretriz 2: "Regra do Clássico de Desespero" (Análogo ao Equilíbrio Tático do 0x0)
+Cenário: Clássico regional com um time no topo (título/G4) vs. outro no Z4.
+Ação: B (Motivação) do desesperado = 10/10; D (Psicológico) do favorito com risco de complacência/pressão; reconhecer neutralização parcial da diferença técnica.
+
+Diretriz 3: "Regra do Fator Climático/Campo" (Análogo da Altitude)
+Cenário: Calor extremo/gramado pesado.
+Ação: Potencializar F (Mando de Campo) do mandante; em G (Elenco/Estratégia) reduzir peso da superioridade técnica do visitante se for time de toque de bola; jogo tende a ser mais físico.
+
+Diretriz 4: "Regra do Leão Ferido" (Reversão à média local)
+Cenário: Time qualificado em 3+ jogos sem vencer, jogando em casa contra adversário em boa fase (similar/um pouco inferior).
+Ação: F (Mando) ≥ 9; reduzir peso de H (Forma) do adversário; tendência de jogo mais agressivo → tendência a Over 2.5.
+
+Diretriz 5: "Alerta de Zebra por Calamidade"
+Cenário: Mandante com 5+ desfalques importantes e visitante sem pressão.
+Ação: Classificar como "Risco Imponderável"; evitar palpite seco; na Loteca sugerir Triplo (1X2); explicitar que a lógica aponta visitante, mas cenário de superação equaliza.
+
+Diretriz 6: "Ressaca Heroica"
+Cenário: Time vem de grande feito na semana (classificação/título/clássico) e enfrenta adversário teoricamente mais fraco, principalmente fora.
+Ação: D (Psicológico) moderado (6-7/10), classificar como “Risco de Complacência”; evitar aposta seca; preferir Duplo Aberto (12) ou até Triplo.
+
+Diretriz 7: "Reversão à Média (Despertar do Gigante)"
+Cenário: Elenco superior (Critério 1 ≥ 8) em jejum de 5+ jogos vs. elenco inferior em boa fase.
+Ação: Reduzir peso de H (Forma recente); valorizar Critério 1 (fator latente); classificar como "Alto Risco de Reversão"; evitar aposta seca; Duplo Aberto (12) ou Triplo na Loteca.
+
+Diretriz 8: Times de Meio de Tabela x Mandantes Desesperados
+Série B (obrigatório): Visitante 7º pra baixo contra mandante no Z4 em casa NUNCA recebe Verde Escuro/Verde Claro → no mínimo Amarelo com empate provável.
+Série A: aplica para visitante 8º–12º; G4/G6 mantém leitura normal.
+Europa: só aplicar se houver crise documentada.
+
+Diretriz 9: Empate na Ida
+Regra: Se o favorito empatou a ida fora, rebaixe um nível de cor (VE→VC; VC→Amarelo), exceto se a ida já estava resolvida (3+ gols).
+
+Diretriz 10: O Miolo Perigosíssimo (diferença 0–2 pts)
+Classificação: Vermelho (<60%) → sempre Triplo (1X2). Zona de imprevisibilidade máxima; não há viés de placar confiável.
+
+Diretriz 11: Alerta de Zebra no Verde Claro
+Se VC (80–89%), checar: (i) favorito goleia ou vence magro? (ii) visitante defende bem? (iii) desfalques ofensivos do favorito?
+Se ≥2 positivos → rebaixar para ~75% (Amarelo). Mudar de aposta seca para Duplo Aberto (12) ou Duplo Fechado (1X).
+
+Diretriz 12: Volatilidade Amarela
+No Amarelo (70–79%), avaliar potencial ofensivo do azarão: média de gols, defesa frágil do favorito fora, artilheiro em fase.
+Se ≥2 positivos → incluir placares elásticos e tender a Over 2.5/3.5. Se houver "Ressaca Heroica", baixar D e J.
+
+FLUXO DE TRABALHO OBRIGATÓRIO (Coleta pré-análise):
+• Posição na tabela e campanha geral.
+• Últimos 5 jogos de cada equipe.
+• Desfalques confirmados/prováveis (lesões, suspensões).
+• Clima interno (crise, euforia, pressão).
+• Histórico recente de confrontos diretos.
+• Logística (sequência de jogos e viagens).
+
+METODOLOGIA RÉGUA 3.0 — ANÁLISE DE DUPLA CAMADA
+
+PASSO 1: CAMADA 1 — FORÇA CIRCUNSTANCIAL (9 critérios, 0–10)
+Avalie e justifique para cada time:
+B. Motivação
+C. Desfalques
+D. Psicológico
+E. Momento na Tabela
+F. Mando de Campo
+G. Elenco/Estratégia Tática (encaixe para este confronto)
+H. Forma Recente
+I. Confronto Direto
+J. Logística/Fadiga
+Em cada time, some um total (0–90) e apresente um “Semáforo do Jogo”.
+
+PASSO 2: CAMADA 2 — FORÇA ESTRUTURAL (Índice Prático, ponderado)
+Para cada time:
+1. Qualidade Estrutural do Elenco (Peso 3)
+2. Consistência / Padrão Tático (Peso 2)
+3. Resiliência Mental (Peso 2)
+4. Fator Técnico/Gerencial (Peso 1)
+Apresente “total_ponderado” (0–80).
+
+PASSO 3: VEREDITO FINAL — CONFLITOS e CENÁRIO
+Compare Camada 1 x Camada 2 e determine:
+• Vencedor circunstancial
+• Vencedor estrutural
+• Cenário de classificação
+• Nível e % de confiança (faixas):
+  🟢 Verde Escuro (90–100%) → apostar seco / coluna única
+  🟢 Verde Claro (80–89%) → 1 ou 2, segurança 1X/2X
+  🟡 Amarelo (70–79%) → duplo obrigatório (1X ou X2)
+  🟠 Laranja (60–69%) → duplo aberto (12) ou Triplo
+  🔴 Vermelho (<60%) → Triplo (1X2)
+• Liste quais diretrizes (1–12) foram aplicadas e como.
+
+RECOMENDAÇÕES PRÁTICAS:
+• Resultado Mais Provável
+• 2–3 placares prováveis
+• Mercado de Gols (Over/Under) e justificativa
+• Ambos Marcam (BTTS) e justificativa
+• Loteca (Coluna 1, Meio, 2; Duplo/Triplo quando necessário)
+
+CONTEÚDO DAS NOTÍCIAS (base para a coleta):
+${conteudos.map(c => `URL: ${c.url}\nConteúdo: ${c.conteudo}`).join('\n\n')}
+
+Responda OBRIGATORIAMENTE em JSON com esta estrutura:
+{
+  "coleta_dados": {
+    "posicao_tabela": "string",
+    "ultimos_jogos": "string",
+    "desfalques": "string",
+    "clima_interno": "string",
+    "historico_confrontos": "string",
+    "logistica": "string"
+  },
+  "camada1_circunstancial": {
+    "mandante": {
+      "motivacao": {"nota": 0, "justificativa": "string"},
+      "desfalques": {"nota": 0, "justificativa": "string"},
+      "psicologico": {"nota": 0, "justificativa": "string"},
+      "momento_tabela": {"nota": 0, "justificativa": "string"},
+      "mando_campo": {"nota": 0, "justificativa": "string"},
+      "elenco_estrategia": {"nota": 0, "justificativa": "string"},
+      "forma_recente": {"nota": 0, "justificativa": "string"},
+      "confronto_direto": {"nota": 0, "justificativa": "string"},
+      "logistica_fadiga": {"nota": 0, "justificativa": "string"},
+      "total": 0
+    },
+    "visitante": {
+      "motivacao": {"nota": 0, "justificativa": "string"},
+      "desfalques": {"nota": 0, "justificativa": "string"},
+      "psicologico": {"nota": 0, "justificativa": "string"},
+      "momento_tabela": {"nota": 0, "justificativa": "string"},
+      "mando_campo": {"nota": 0, "justificativa": "string"},
+      "elenco_estrategia": {"nota": 0, "justificativa": "string"},
+      "forma_recente": {"nota": 0, "justificativa": "string"},
+      "confronto_direto": {"nota": 0, "justificativa": "string"},
+      "logistica_fadiga": {"nota": 0, "justificativa": "string"},
+      "total": 0
+    },
+    "semaforo_jogo": "string"
+  },
+  "camada2_estrutural": {
+    "mandante": {
+      "qualidade_elenco": {"nota": 0, "peso": 3, "justificativa": "string"},
+      "consistencia_tatica": {"nota": 0, "peso": 2, "justificativa": "string"},
+      "resiliencia_mental": {"nota": 0, "peso": 2, "justificativa": "string"},
+      "fator_gerencial": {"nota": 0, "peso": 1, "justificativa": "string"},
+      "total_ponderado": 0
+    },
+    "visitante": {
+      "qualidade_elenco": {"nota": 0, "peso": 3, "justificativa": "string"},
+      "consistencia_tatica": {"nota": 0, "peso": 2, "justificativa": "string"},
+      "resiliencia_mental": {"nota": 0, "peso": 2, "justificativa": "string"},
+      "fator_gerencial": {"nota": 0, "peso": 1, "justificativa": "string"},
+      "total_ponderado": 0
+    }
+  },
+  "veredito_final": {
+    "vencedor_circunstancial": "string",
+    "vencedor_estrutural": "string",
+    "cenario_classificacao": "string",
+    "nivel_confianca": "string",
+    "percentual_confianca": 0,
+    "diretrizes_aplicadas": ["string"],
+    "analise_final": "string"
+  },
+  "recomendacoes": {
+    "resultado_provavel": "string",
+    "placares_provaveis": ["string"],
+    "mercado_gols": "string",
+    "ambos_marcam": "string",
+    "loteca": "string"
+  }
+}`;
+;
 
       try{
         const response = await fetch('/.netlify/functions/openai-analysis', {
