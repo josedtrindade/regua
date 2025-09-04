@@ -1,4 +1,9 @@
-<!DOCTYPE html>
+
+        
+       
+            
+        
+    <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -1106,7 +1111,7 @@
             
             // Passo 5: Análise com OpenAI
             updateStep('step5', 'active');
-            const analiseCompleta = await analisarConteudoComRegua3(jogo, campeonato, conteudos);
+            const analiseCompleta = await analisarConteudoComRegua3(jogo, campeonato, conteudos, urls);
             updateStep('step5', 'complete');
             
             // Passo 6: Salvar no banco
@@ -1162,7 +1167,7 @@
             return conteudos;
         }
         
-        async function analisarConteudoComRegua3(jogo, campeonato, conteudos) {
+        async function analisarConteudoComRegua3(jogo, campeonato, conteudos, urls) {
             // Prompt completo da Régua 3.0
             const promptCompleto = `Você é um Analista de Futebol Sênior, autônomo e proativo. Sua tarefa é realizar uma análise completa de uma partida de futebol usando a metodologia "Régua 3.0 - Análise de Dupla Camada".
 
@@ -1731,4 +1736,12 @@ Responda OBRIGATORIAMENTE em formato JSON estruturado com as seguintes chaves:
         }
     </script>
 </body>
-</html>
+</html>  
+                  
+ 
+    
+              
+          
+          
+
+                        
