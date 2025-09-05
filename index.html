@@ -18,60 +18,89 @@
     .tab.active{background:#667eea;color:#fff}
     .tab:hover{background:#5a6fd8;color:#fff}
     .content{background:#fff;border-radius:10px;padding:30px;box-shadow:0 4px 15px rgba(0,0,0,.1);min-height:500px}
-    .tab-content{display:none}.tab-content.active{display:block}
+    .tab-content{display:none}
+    .tab-content.active{display:block}
     .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-bottom:30px}
     .stat-card{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:20px;border-radius:10px;text-align:center}
-    .stat-card h3{font-size:2rem;margin-bottom:5px}.stat-card p{opacity:.9}
+    .stat-card h3{font-size:2rem;margin-bottom:5px}
+    .stat-card p{opacity:.9}
     .form-group{margin-bottom:20px}
     .form-group label{display:block;margin-bottom:5px;font-weight:600;color:#333}
     .form-group input,.form-group textarea,.form-group select{width:100%;padding:12px;border:2px solid #e1e5e9;border-radius:8px;font-size:1rem;transition:border-color .3s}
     .form-group input:focus,.form-group textarea:focus,.form-group select:focus{outline:none;border-color:#667eea}
     .btn{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:12px 30px;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;transition:transform .2s}
-    .btn:hover{transform:translateY(-2px)}.btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+    .btn:hover{transform:translateY(-2px)}
+    .btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
     .btn-outline{background:transparent;border:2px solid #667eea;color:#667eea}
     .btn-outline:hover{background:#667eea;color:#fff}
     .url-inputs{display:grid;gap:15px;margin-bottom:20px}
     .confidence-indicator{padding:10px;border-radius:8px;margin:10px 0;font-weight:600;text-align:center}
-    .verde-escuro{background:#1e7e34;color:#fff}.verde-claro{background:#28a745;color:#fff}.amarelo{background:#ffc107;color:#333}.laranja{background:#fd7e14;color:#fff}.vermelho{background:#dc3545;color:#fff}
-    .loading{text-align:center;padding:20px}.spinner{border:4px solid #f3f3f3;border-top:4px solid #667eea;border-radius:50%;width:40px;height:40px;animation:spin 1s linear infinite;margin:0 auto}
+    .verde-escuro{background:#1e7e34;color:#fff}
+    .verde-claro{background:#28a745;color:#fff}
+    .amarelo{background:#ffc107;color:#333}
+    .laranja{background:#fd7e14;color:#fff}
+    .vermelho{background:#dc3545;color:#fff}
+    .loading{text-align:center;padding:20px}
+    .spinner{border:4px solid #f3f3f3;border-top:4px solid #667eea;border-radius:50%;width:40px;height:40px;animation:spin 1s linear infinite;margin:0 auto}
     @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
     .chart-container{position:relative;height:400px;margin:20px 0}
     .table-container{overflow-x:auto;margin-top:20px}
-    table{width:100%;border-collapse:collapse;margin-top:20px}th,td{padding:12px;text-align:left;border-bottom:1px solid #ddd}th{background:#f8f9fa;font-weight:600}tr:hover{background:#f8f9fa}
+    table{width:100%;border-collapse:collapse;margin-top:20px}
+    th,td{padding:12px;text-align:left;border-bottom:1px solid #ddd}
+    th{background:#f8f9fa;font-weight:600}
+    tr:hover{background:#f8f9fa}
     .success{background:#d4edda;color:#155724;padding:15px;border-radius:8px;margin:10px 0}
     .error{background:#f8d7da;color:#721c24;padding:15px;border-radius:8px;margin:10px 0}
     .connection-status{padding:10px;border-radius:8px;margin-bottom:20px;text-align:center;font-weight:600}
-    .connected{background:#d4edda;color:#155724}.disconnected{background:#f8d7da;color:#721c24}
-    .ai-status{display:flex;gap:10px;margin-bottom:20px}.ai-indicator{flex:1;padding:8px;border-radius:6px;text-align:center;font-size:.9rem;font-weight:600}.ai-active{background:#d4edda;color:#155724}.ai-inactive{background:#f8d7da;color:#721c24}
+    .connected{background:#d4edda;color:#155724}
+    .disconnected{background:#f8d7da;color:#721c24}
+    .ai-status{display:flex;gap:10px;margin-bottom:20px}
+    .ai-indicator{flex:1;padding:8px;border-radius:6px;text-align:center;font-size:.9rem;font-weight:600}
+    .ai-active{background:#d4edda;color:#155724}
+    .ai-inactive{background:#f8d7da;color:#721c24}
     .analysis-steps{background:#f8f9fa;padding:15px;border-radius:8px;margin:15px 0}
-    .step{display:flex;align-items:center;margin:8px 0;padding:5px}.step-icon{width:20px;height:20px;border-radius:50%;margin-right:10px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold}
-    .step-pending{background:#6c757d;color:#fff}.step-active{background:#007bff;color:#fff}.step-complete{background:#28a745;color:#fff}.step-error{background:#dc3545;color:#fff}
+    .step{display:flex;align-items:center;margin:8px 0;padding:5px}
+    .step-icon{width:20px;height:20px;border-radius:50%;margin-right:10px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold}
+    .step-pending{background:#6c757d;color:#fff}
+    .step-active{background:#007bff;color:#fff}
+    .step-complete{background:#28a745;color:#fff}
+    .step-error{background:#dc3545;color:#fff}
     .security-badge{background:#28a745;color:#fff;padding:5px 10px;border-radius:15px;font-size:.8rem;margin-left:10px}
     .analysis-section{background:#f8f9fa;padding:20px;border-radius:8px;margin:15px 0;border-left:4px solid #667eea}
     .layer-analysis{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0}
     .team-analysis{background:#fff;padding:15px;border-radius:8px;box-shadow:0 2px 5px rgba(0,0,0,.1)}
-    .criteria-table{width:100%;margin-top:10px}.criteria-table th,.criteria-table td{padding:8px;text-align:center;border:1px solid #ddd}
-    .score-high{background:#d4edda;color:#155724}.score-medium{background:#fff3cd;color:#856404}.score-low{background:#f8d7da;color:#721c24}
+    .criteria-table{width:100%;margin-top:10px}
+    .criteria-table th,.criteria-table td{padding:8px;text-align:center;border:1px solid #ddd}
+    .score-high{background:#d4edda;color:#155724}
+    .score-medium{background:#fff3cd;color:#856404}
+    .score-low{background:#f8d7da;color:#721c24}
     .recommendations-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin:20px 0}
     .recommendation-card{background:#fff;padding:15px;border-radius:8px;box-shadow:0 2px 5px rgba(0,0,0,.1);text-align:center}
     .recommendation-card h4{color:#667eea;margin-bottom:10px}
     .collapsible{background:#f1f1f1;color:#444;cursor:pointer;padding:15px;width:100%;border:none;text-align:left;outline:none;font-size:15px;font-weight:600;border-radius:5px;margin:5px 0}
-    .collapsible:hover{background:#ddd}.collapsible.active{background:#667eea;color:#fff}
+    .collapsible:hover{background:#ddd}
+    .collapsible.active{background:#667eea;color:#fff}
     .collapsible-content{padding:0 15px;max-height:0;overflow:hidden;transition:max-height .2s ease-out;background:#fff;border-radius:0 0 5px 5px}
     .collapsible-content.active{padding:15px;max-height:1000px}
 
-    /* ====== LANDING PAGE ====== */
-    #landing{max-width:1200px;margin:0 auto;padding:40px 20px;color:#fff}
-    .landing-hero{text-align:center;margin-bottom:60px}
-    .landing-hero h1{font-size:3rem;margin-bottom:20px;font-weight:700}
-    .landing-hero p{font-size:1.3rem;margin-bottom:30px;opacity:.9}
-    .cta-buttons{display:flex;gap:20px;justify-content:center;margin-bottom:40px;flex-wrap:wrap}
-    .badges{display:flex;gap:15px;justify-content:center;flex-wrap:wrap}
-    .badges span{background:rgba(255,255,255,.2);padding:8px 16px;border-radius:20px;font-size:.9rem}
-    .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:30px}
-    .feature-card{background:rgba(255,255,255,.1);padding:30px;border-radius:15px;text-align:center;backdrop-filter:blur(10px)}
-    .feature-card h3{font-size:1.5rem;margin-bottom:15px;color:#fff}
-    .feature-card p{opacity:.9;line-height:1.6}
+    /* ====== LANDING (página de vendas) — CSS unificado ====== */
+    #landing { max-width: 1100px; margin: 30px auto; padding: 0 20px; color:#fff }
+    .landing-hero {
+      background: rgba(255,255,255,.9);
+      border-radius: 14px; padding: 28px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.12); text-align: center;
+    }
+    .landing-hero h1 { font-size: 2rem; margin-bottom: 10px; color: #222; }
+    .landing-hero p { color: #444; margin-bottom: 16px; }
+    .badges { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:10px; }
+    .badges span { background:#eef2ff; color:#3f47c6; padding:6px 10px; border-radius:999px; font-weight:600; font-size:.9rem; }
+    .cta-buttons { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin: 10px 0 5px; }
+    .btn.btn-outline { background:#fff; color:#667eea; border:2px solid #667eea; }
+    .btn.btn-outline:hover { background:#eef2ff; }
+    .features-grid { margin-top:18px; display:grid; gap:14px; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); }
+    .feature-card { background:#fff; border-radius:12px; padding:16px; box-shadow: 0 6px 16px rgba(0,0,0,.08); }
+    .feature-card h3 { color:#4a57e2; margin-bottom:6px; }
+    .feature-card p { color:#555; }
 
     /* ====== BLOCO DE LOGIN ====== */
     #auth{max-width:480px;margin:20px auto;background:#fff;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,.12);padding:20px}
@@ -146,35 +175,7 @@
     </p>
   </div>
 
-  /* ====== LANDING (página de vendas) ====== */
-#landing { max-width: 1100px; margin: 30px auto; }
-.landing-hero {
-  background: rgba(255,255,255,.9);
-  border-radius: 14px; padding: 28px;
-  box-shadow: 0 10px 24px rgba(0,0,0,.12); text-align: center;
-}
-.landing-hero h1 { font-size: 2rem; margin-bottom: 10px; color: #222; }
-.landing-hero p { color: #444; margin-bottom: 16px; }
-.badges { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:10px; }
-.badges span { background:#eef2ff; color:#3f47c6; padding:6px 10px; border-radius:999px; font-weight:600; font-size:.9rem; }
-
-.cta-buttons { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin: 10px 0 5px; }
-.btn.btn-outline { background:#fff; color:#667eea; border:2px solid #667eea; }
-.btn.btn-outline:hover { background:#eef2ff; }
-
-.features-grid {
-  margin-top:18px; display:grid; gap:14px;
-  grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
-}
-.feature-card {
-  background:#fff; border-radius:12px; padding:16px;
-  box-shadow: 0 6px 16px rgba(0,0,0,.08);
-}
-.feature-card h3 { color:#4a57e2; margin-bottom:6px; }
-.feature-card p { color:#555; }
-
-
-  <!-- TODO O SEU APP FICA AQUI DENTRO (visível quando logado) -->
+  <!-- APP (visível quando logado) -->
   <div id="app" style="display:none">
     <div class="container">
       <div class="header">
@@ -302,14 +303,12 @@
 
         <!-- Metodologia Tab -->
         <div id="metodologia" class="tab-content">
-          <!-- (seu conteúdo original da metodologia permanece igual) -->
-          <!-- ... -->
+          <!-- (seu conteúdo da metodologia) -->
         </div>
 
         <!-- Sobre Tab -->
         <div id="sobre" class="tab-content">
-          <!-- (seu conteúdo original do "Sobre" permanece igual) -->
-          <!-- ... -->
+          <!-- (seu conteúdo do Sobre) -->
         </div>
       </div>
     </div>
@@ -436,7 +435,7 @@
       });
     }
 
-    // ======= TABS (ajuste: recebendo o event) =======
+    // ======= TABS =======
     function showTab(tabName, ev) {
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -541,7 +540,7 @@
       return '';
     }
 
-    // ======= NOVA ANÁLISE (mantive seu fluxo) =======
+    // ======= NOVA ANÁLISE =======
     document.addEventListener('DOMContentLoaded', ()=>{
       const form = document.getElementById('novaAnaliseForm');
       if (!form) return;
@@ -805,7 +804,7 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
           headers:{'Content-Type':'application/json'},
           body:JSON.stringify({
             messages:[
-              { role:'system', content:'Você é um especialista...' },
+              { role:'system', content:'Você é um especialista em análise tática e predição de resultados de futebol. Responda sempre de forma precisa e utilitária.' },
               { role:'user', content: promptCompleto }
             ],
             model:'gpt-4', temperature:0, max_tokens:4096
@@ -819,8 +818,13 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
         return analiseJSON;
       } catch (error){
         console.error('Erro na análise OpenAI:', error);
-        // Fallback (mantido igual ao seu)
-        return { /* ... seu objeto de fallback igual ao original ... */ };
+        // Fallback opcional:
+        return {
+          jogo, campeonato, urls,
+          coleta_dados:{}, camada1_circunstancial:{}, camada2_estrutural:{},
+          veredito_final:{ nivel_confianca:'Vermelho (<60%)', percentual_confianca: 55, cenario_classificacao:'Miolo Perigosíssimo', diretrizes_aplicadas:[], analise_final:'Falha ao obter análise' },
+          recomendacoes:{ resultado_provavel:'Triplo (1X2)', placares_provaveis:['0x0','1x1','1x2'], mercado_gols:'Under 3.5', ambos_marcam:'Talvez', loteca:'Triplo' }
+        };
       }
     }
 
@@ -839,9 +843,8 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
 
     function mostrarResultadoAnalise(analise){
       const resultado = document.getElementById('resultadoAnalise');
-      // (mantido: seu HTML de apresentação do resultado)
-      // ... cole aqui o mesmo bloco que você já tinha para renderizar o resultado ...
-      // Reativar collapsibles:
+      // aqui você pode renderizar a saída em cards/tabelas conforme seu template preferido
+      // reativar collapsibles, se usados:
       inicializarCollapsibles();
     }
 
