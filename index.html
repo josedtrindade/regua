@@ -146,6 +146,34 @@
     </p>
   </div>
 
+  /* ====== LANDING (página de vendas) ====== */
+#landing { max-width: 1100px; margin: 30px auto; }
+.landing-hero {
+  background: rgba(255,255,255,.9);
+  border-radius: 14px; padding: 28px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.12); text-align: center;
+}
+.landing-hero h1 { font-size: 2rem; margin-bottom: 10px; color: #222; }
+.landing-hero p { color: #444; margin-bottom: 16px; }
+.badges { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:10px; }
+.badges span { background:#eef2ff; color:#3f47c6; padding:6px 10px; border-radius:999px; font-weight:600; font-size:.9rem; }
+
+.cta-buttons { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin: 10px 0 5px; }
+.btn.btn-outline { background:#fff; color:#667eea; border:2px solid #667eea; }
+.btn.btn-outline:hover { background:#eef2ff; }
+
+.features-grid {
+  margin-top:18px; display:grid; gap:14px;
+  grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+}
+.feature-card {
+  background:#fff; border-radius:12px; padding:16px;
+  box-shadow: 0 6px 16px rgba(0,0,0,.08);
+}
+.feature-card h3 { color:#4a57e2; margin-bottom:6px; }
+.feature-card p { color:#555; }
+
+
   <!-- TODO O SEU APP FICA AQUI DENTRO (visível quando logado) -->
   <div id="app" style="display:none">
     <div class="container">
