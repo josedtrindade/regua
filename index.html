@@ -108,6 +108,11 @@
     #status{color:#fff;text-align:center;margin:10px auto}
     .topbar{display:none;justify-content:space-between;align-items:center;max-width:1400px;margin:0 auto;padding:10px 20px;color:#fff}
     .topbar .right{display:flex;gap:10px;align-items:center}
+
+    /* ---- Inline validation (novas classes) ---- */
+    .help-text{color:#dc3545;font-size:.85rem;margin-top:6px;display:none}
+    .help-text.show{display:block}
+    .input-error{border-color:#dc3545 !important}
   </style>
 </head>
 <body>
@@ -160,10 +165,12 @@
     <div class="form-group">
       <label for="email">E-mail</label>
       <input id="email" type="email" placeholder="voce@email.com"/>
+      <small id="emailHelp" class="help-text"></small>
     </div>
     <div class="form-group">
       <label for="password">Senha</label>
       <input id="password" type="password" placeholder="Sua senha"/>
+      <small id="passwordHelp" class="help-text"></small>
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap">
       <button class="btn" id="btn-login">Entrar</button>
@@ -330,6 +337,12 @@
         carregarDashboard();
       }
       inicializarCollapsibles();
+
+      // limpa inline errors ao digitar
+      ['email','password'].forEach(id=>{
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', ()=>clearFieldError(el));
+      });
     });
 
     // ======= SUPABASE CLIENT =======
@@ -391,11 +404,27 @@
       if (landingEl) landingEl.style.display = 'none';
       if (authEl) {
         authEl.style.display = 'block';
-        // rola até o bloco de login
         authEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        // foca no e-mail para agilizar
         const email = document.getElementById('email');
         if (email) setTimeout(()=>email.focus(), 200);
+      }
+    }
+
+    // helpers de validação inline (sem alert)
+    function showFieldError(input, msg, helpId){
+      if (!input) return;
+      input.classList.add('input-error');
+      const help = document.getElementById(helpId);
+      if (help){ help.textContent = msg; help.classList.add('show'); }
+      input.focus();
+    }
+    function clearFieldError(input){
+      if (!input) return;
+      input.classList.remove('input-error');
+      const helpId = (input.id === 'email') ? 'emailHelp' : (input.id === 'password' ? 'passwordHelp' : null);
+      if (helpId){
+        const help = document.getElementById(helpId);
+        if (help){ help.textContent = ''; help.classList.remove('show'); }
       }
     }
 
@@ -411,52 +440,74 @@
         const emailEl = document.getElementById('email');
         const passEl  = document.getElementById('password');
 
-        const email = (emailEl?.value || '').trim();
+        let email = (emailEl?.value || '').trim();
         const password = passEl?.value || '';
 
-        // validações
-        if (!email) { alert('Por favor, informe um e-mail válido.'); emailEl?.focus(); return; }
-        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        if (!emailOk) { alert('E-mail parece inválido.'); emailEl?.focus(); return; }
-
-        if (!password || password.length < 6) {
-          alert('Defina uma senha com pelo menos 6 caracteres.');
-          passEl?.focus(); return;
+        // sem alert: mensagens inline
+        if (!email) { showFieldError(emailEl,'Informe seu e-mail.','emailHelp'); return; }
+        if (emailEl && typeof emailEl.checkValidity === 'function' && !emailEl.checkValidity()) {
+          showFieldError(emailEl,'E-mail inválido.','emailHelp'); return;
         }
+        if (!email.includes('@')) { showFieldError(emailEl,'E-mail inválido.','emailHelp'); return; }
+
+        if (!password) { showFieldError(passEl,'Defina uma senha.','passwordHelp'); return; }
+        if (password.length < 6) { showFieldError(passEl,'Use ao menos 6 caracteres.','passwordHelp'); return; }
+
+        email = email.toLowerCase();
 
         const { error } = await supabase.auth.signUp({ email, password });
 
         if (error) {
           const msg = String(error.message || '').toLowerCase();
           if (msg.includes('anonymous')) {
-            alert('Preencha e-mail e senha. Cadastros anônimos estão desativados.');
+            showFieldError(emailEl,'Preencha e-mail e senha. Cadastros anônimos estão desativados.','emailHelp');
           } else {
-            alert(error.message);
+            // mostra erro do provedor como inline no topo do formulário de e-mail
+            showFieldError(emailEl,error.message,'emailHelp');
           }
           return;
         }
 
+        // sucesso
+        clearFieldError(emailEl); clearFieldError(passEl);
         alert('Cadastro criado! Confirme seu e-mail para ativar a conta.');
       };
 
       document.getElementById('btn-login').onclick = async () => {
-        const email = (document.getElementById('email')?.value || '').trim();
-        const password = document.getElementById('password')?.value || '';
+        const emailEl = document.getElementById('email');
+        const passEl  = document.getElementById('password');
 
-        if (!email || !password) {
-          alert('Informe e-mail e senha para entrar.');
-          return;
+        let email = (emailEl?.value || '').trim();
+        const password = passEl?.value || '';
+
+        if (!email) { showFieldError(emailEl,'Informe seu e-mail.','emailHelp'); return; }
+        if (emailEl && typeof emailEl.checkValidity === 'function' && !emailEl.checkValidity()) {
+          showFieldError(emailEl,'E-mail inválido.','emailHelp'); return;
         }
+        if (!email.includes('@')) { showFieldError(emailEl,'E-mail inválido.','emailHelp'); return; }
+        if (!password) { showFieldError(passEl,'Informe sua senha.','passwordHelp'); return; }
+
+        email = email.toLowerCase();
 
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) alert(error.message);
+        if (error) {
+          showFieldError(passEl, error.message || 'Falha no login.', 'passwordHelp');
+          return;
+        }
+        clearFieldError(emailEl); clearFieldError(passEl);
       };
 
       document.getElementById('btn-forgot').onclick = async () => {
-        const email = document.getElementById('email').value.trim();
-        if (!email) { alert('Digite seu e-mail antes.'); return; }
+        const emailEl = document.getElementById('email');
+        const email = (emailEl?.value || '').trim();
+        if (!email) { showFieldError(emailEl,'Digite seu e-mail antes.','emailHelp'); return; }
         const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: 'https://regua.netlify.app/reset' });
-        alert(error ? error.message : 'Enviamos um e-mail com o link para redefinir sua senha.');
+        if (error) {
+          showFieldError(emailEl, error.message || 'Não foi possível enviar o e-mail.', 'emailHelp');
+        } else {
+          const help = document.getElementById('emailHelp');
+          if (help){ help.textContent = 'Enviamos um e-mail com o link para redefinir sua senha.'; help.classList.add('show'); }
+        }
       };
 
       document.getElementById('btn-logout').onclick = async () => {
