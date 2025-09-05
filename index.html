@@ -674,7 +674,18 @@
       const analiseCompleta = await analisarConteudoComRegua3(jogo, campeonato, conteudos, urls);
       updateStep('step5','complete');
 
-      updateStep('step6','active'); await salvarAnaliseNoBanco(analiseCompleta); updateStep('step6','complete');
+      updateStep('step6','active');
+      try{
+        await salvarAnaliseNoBanco(analiseCompleta);
+        updateStep('step6','complete');
+      } catch (e){
+        updateStep('step6','error');
+        const tgt = document.getElementById('resultadoAnalise');
+        if (tgt){
+          tgt.innerHTML = `<div class="error"><h3>❌ Erro ao salvar análise</h3><p>${e.message}</p></div>`;
+        }
+        throw e;
+      }
 
       mostrarResultadoAnalise(analiseCompleta);
       carregarDashboard();
@@ -920,17 +931,45 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
       }
     }
 
+    // ==== helper user_id + salvar com RLS ====
+    async function getUserId() {
+      const { data, error } = await supabase.auth.getUser();
+      if (error || !data?.user?.id) return null;
+      return data.user.id;
+    }
+
     async function salvarAnaliseNoBanco(analise){
-      const { error } = await supabase.from('analises_regua3').insert([{
-        jogo: analise.jogo, campeonato: analise.campeonato, urls: analise.urls,
-        coleta_dados: analise.coleta_dados, camada1_circunstancial: analise.camada1_circunstancial,
-        camada2_estrutural: analise.camada2_estrutural, veredito_final: analise.veredito_final,
-        recomendacoes: analise.recomendacoes, nivel_confianca: analise.veredito_final.nivel_confianca,
-        percentual_confianca: analise.veredito_final.percentual_confianca,
-        cenario_classificacao: analise.veredito_final.cenario_classificacao,
-        previsao_regua: analise.recomendacoes.resultado_provavel, created_at: new Date().toISOString()
-      }]);
-      if (error) throw error;
+      const userId = await getUserId();
+      if (!userId) {
+        throw new Error('Você não está autenticado. Faça login novamente.');
+      }
+
+      const linha = {
+        user_id: userId,
+        jogo: analise.jogo,
+        campeonato: analise.campeonato,
+        urls: analise.urls,
+        coleta_dados: analise.coleta_dados,
+        camada1_circunstancial: analise.camada1_circunstancial,
+        camada2_estrutural: analise.camada2_estrutural,
+        veredito_final: analise.veredito_final,
+        recomendacoes: analise.recomendacoes,
+        nivel_confianca: analise.veredito_final?.nivel_confianca || null,
+        percentual_confianca: analise.veredito_final?.percentual_confianca ?? null,
+        cenario_classificacao: analise.veredito_final?.cenario_classificacao || null,
+        previsao_regua: analise.recomendacoes?.resultado_provavel || null,
+        created_at: new Date().toISOString()
+      };
+
+      const { data, error } = await supabase
+        .from('analises_regua3')
+        .insert([linha])
+        .select('id');
+
+      if (error) {
+        throw new Error('Falha ao salvar no banco: ' + (error.message || JSON.stringify(error)));
+      }
+      return data?.[0]?.id || null;
     }
 
     function mostrarResultadoAnalise(analise){
