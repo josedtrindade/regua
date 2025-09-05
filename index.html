@@ -396,9 +396,7 @@
       }
     }
 
-    // >>>>>> TRECHO SOLICITADO (logo depois de refreshUI) <<<<<<
     function showLogin(){
-      // mostra o bloco de login e oculta a landing
       const landingEl = document.getElementById('landing');
       const authEl = document.getElementById('auth');
       if (landingEl) landingEl.style.display = 'none';
@@ -410,7 +408,6 @@
       }
     }
 
-    // helpers de validação inline (sem alert)
     function showFieldError(input, msg, helpId){
       if (!input) return;
       input.classList.add('input-error');
@@ -429,32 +426,26 @@
     }
 
     function configurarAutenticacao(){
-      // reage a login/logout/refresh
       supabase.auth.onAuthStateChange(async (_event,_session)=> {
         await refreshUI();
         if (await isLogged()) carregarDashboard();
       });
 
-      // Ações dos botões
       document.getElementById('btn-signup').onclick = async () => {
         const emailEl = document.getElementById('email');
         const passEl  = document.getElementById('password');
-
         let email = (emailEl?.value || '').trim();
         const password = passEl?.value || '';
 
-        // sem alert: mensagens inline
         if (!email) { showFieldError(emailEl,'Informe seu e-mail.','emailHelp'); return; }
         if (emailEl && typeof emailEl.checkValidity === 'function' && !emailEl.checkValidity()) {
           showFieldError(emailEl,'E-mail inválido.','emailHelp'); return;
         }
         if (!email.includes('@')) { showFieldError(emailEl,'E-mail inválido.','emailHelp'); return; }
-
         if (!password) { showFieldError(passEl,'Defina uma senha.','passwordHelp'); return; }
         if (password.length < 6) { showFieldError(passEl,'Use ao menos 6 caracteres.','passwordHelp'); return; }
 
         email = email.toLowerCase();
-
         const { error } = await supabase.auth.signUp({ email, password });
 
         if (error) {
@@ -462,13 +453,10 @@
           if (msg.includes('anonymous')) {
             showFieldError(emailEl,'Preencha e-mail e senha. Cadastros anônimos estão desativados.','emailHelp');
           } else {
-            // mostra erro do provedor como inline no topo do formulário de e-mail
             showFieldError(emailEl,error.message,'emailHelp');
           }
           return;
         }
-
-        // sucesso
         clearFieldError(emailEl); clearFieldError(passEl);
         alert('Cadastro criado! Confirme seu e-mail para ativar a conta.');
       };
@@ -476,7 +464,6 @@
       document.getElementById('btn-login').onclick = async () => {
         const emailEl = document.getElementById('email');
         const passEl  = document.getElementById('password');
-
         let email = (emailEl?.value || '').trim();
         const password = passEl?.value || '';
 
@@ -488,7 +475,6 @@
         if (!password) { showFieldError(passEl,'Informe sua senha.','passwordHelp'); return; }
 
         email = email.toLowerCase();
-
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) {
           showFieldError(passEl, error.message || 'Falha no login.', 'passwordHelp');
@@ -506,7 +492,6 @@
           showFieldError(emailEl, error.message || 'Não foi possível enviar o e-mail.', 'emailHelp');
         } else {
           const help = document.getElementById('emailHelp');
-          
           if (help){ help.textContent = 'Enviamos um e-mail com o link para redefinir sua senha.'; help.classList.add('show'); }
         }
       };
@@ -516,7 +501,6 @@
       };
     }
 
-    // ======= COLLAPSIBLES =======
     function inicializarCollapsibles() {
       const collapsibles = document.querySelectorAll('.collapsible');
       collapsibles.forEach(collapsible => {
@@ -528,7 +512,6 @@
       });
     }
 
-    // ======= TABS =======
     function showTab(tabName, ev) {
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -539,7 +522,6 @@
       else if (tabName === 'historico') carregarHistorico();
     }
 
-    // ======= DASHBOARD / HISTÓRICO =======
     async function carregarDashboard() {
       try {
         const { data: analises, error } = await supabase
@@ -547,28 +529,49 @@
           .select('*')
           .order('created_at', { ascending: false });
 
-        if (error) { console.error('Erro ao buscar análises:', error); return; }
+        if (error) {
+          console.error('Erro ao buscar análises para o dashboard:', error);
+          // Mostra um erro amigável na tela se o dashboard não puder ser carregado
+          document.getElementById('statsGrid').innerHTML = `<p class="error">Não foi possível carregar as estatísticas.</p>`;
+          return;
+        }
 
+        // Se chegar aqui, a busca foi bem-sucedida, mesmo que 'analises' seja um array vazio
         const stats = calcularEstatisticas(analises || []);
         atualizarDashboard(stats);
         criarGrafico(stats);
         const ultimasAnalises = (analises || []).slice(0, 10);
         atualizarTabelaUltimas(ultimasAnalises);
+
       } catch (error) {
-        console.error('Erro ao carregar dashboard:', error);
+        // Pega erros que podem acontecer em calcularEstatisticas ou outras funções
+        console.error('Erro crítico ao carregar o dashboard:', error);
+        document.getElementById('dashboard').innerHTML = `<div class="error"><h3>Ocorreu um erro inesperado</h3><p>Não foi possível exibir o dashboard. Verifique o console (F12) para detalhes técnicos. Pode haver um dado corrompido no banco.</p></div>`;
       }
     }
 
+    // =================================================================
+    // >>>>> FUNÇÃO CORRIGIDA PARA EVITAR TRAVAMENTO (ROBUSTA) <<<<<
+    // =================================================================
     function calcularEstatisticas(analises) {
       const stats = {
         total: analises.length, acertos: 0,
         verdeEscuro:{total:0,acertos:0}, verdeClaro:{total:0,acertos:0},
         amarelo:{total:0,acertos:0}, laranja:{total:0,acertos:0}, vermelho:{total:0,acertos:0}
       };
-      analises.forEach(a=>{
-        const acertou = a.acerto && (a.acerto.includes('✅') || a.acerto.includes('Pleno'));
+
+      if (!analises) return stats; // Retorna stats zerados se não houver análises
+
+      analises.forEach(a => {
+        // ---- INÍCIO DA CORREÇÃO DE ROBUSTEZ ----
+        // Garante que 'a' (análise) e 'a.acerto' existam antes de usar .includes()
+        const acertou = a && a.acerto && (a.acerto.includes('✅') || a.acerto.includes('Pleno'));
         if (acertou) stats.acertos++;
-        const nivel = a.nivel_confianca || '';
+
+        // Usa optional chaining (?.) para acessar 'nivel_confianca' de forma segura
+        const nivel = a?.nivel_confianca || '';
+        // ---- FIM DA CORREÇÃO DE ROBUSTEZ ----
+
         if (nivel.includes('Verde Escuro')) {stats.verdeEscuro.total++; if (acertou) stats.verdeEscuro.acertos++;}
         else if (nivel.includes('Verde Claro')) {stats.verdeClaro.total++; if (acertou) stats.verdeClaro.acertos++;}
         else if (nivel.includes('Amarelo')) {stats.amarelo.total++; if (acertou) stats.amarelo.acertos++;}
@@ -581,15 +584,15 @@
     function atualizarDashboard(stats){
       document.getElementById('totalJogos').textContent = stats.total;
       document.getElementById('taxaAcerto').textContent =
-        stats.total>0 ? Math.round((stats.acertos/stats.total)*100)+'%' : '0%';
+        stats.total > 0 ? Math.round((stats.acertos / stats.total) * 100) + '%' : '0%';
       document.getElementById('verdeEscuroAcerto').textContent =
-        stats.verdeEscuro.total>0 ? Math.round((stats.verdeEscuro.acertos/stats.verdeEscuro.total)*100)+'%' : '0%';
+        stats.verdeEscuro.total > 0 ? Math.round((stats.verdeEscuro.acertos / stats.verdeEscuro.total) * 100) + '%' : '0%';
       document.getElementById('verdeClaroAcerto').textContent =
-        stats.verdeClaro.total>0 ? Math.round((stats.verdeClaro.acertos/stats.verdeClaro.total)*100)+'%' : '0%';
+        stats.verdeClaro.total > 0 ? Math.round((stats.verdeClaro.acertos / stats.verdeClaro.total) * 100) + '%' : '0%';
       document.getElementById('amareloAcerto').textContent =
-        stats.amarelo.total>0 ? Math.round((stats.amarelo.acertos/stats.amarelo.total)*100)+'%' : '0%';
+        stats.amarelo.total > 0 ? Math.round((stats.amarelo.acertos / stats.amarelo.total) * 100) + '%' : '0%';
       document.getElementById('laranjaAcerto').textContent =
-        stats.laranja.total>0 ? Math.round((stats.laranja.acertos/stats.laranja.total)*100)+'%' : '0%';
+        stats.laranja.total > 0 ? Math.round((stats.laranja.acertos / stats.laranja.total) * 100) + '%' : '0%';
     }
 
     function criarGrafico(stats){
@@ -600,27 +603,32 @@
         data:{
           labels:['Verde Escuro','Verde Claro','Amarelo','Laranja','Vermelho'],
           datasets:[{label:'Taxa de Acerto (%)',data:[
-            stats.verdeEscuro.total?Math.round((stats.verdeEscuro.acertos/stats.verdeEscuro.total)*100):0,
-            stats.verdeClaro.total?Math.round((stats.verdeClaro.acertos/stats.verdeClaro.total)*100):0,
-            stats.amarelo.total?Math.round((stats.amarelo.acertos/stats.amarelo.total)*100):0,
-            stats.laranja.total?Math.round((stats.laranja.acertos/stats.laranja.total)*100):0,
-            stats.vermelho.total?Math.round((stats.vermelho.acertos/stats.vermelho.total)*100):0
+            stats.verdeEscuro.total ? Math.round((stats.verdeEscuro.acertos/stats.verdeEscuro.total)*100) : 0,
+            stats.verdeClaro.total ? Math.round((stats.verdeClaro.acertos/stats.verdeClaro.total)*100) : 0,
+            stats.amarelo.total ? Math.round((stats.amarelo.acertos/stats.amarelo.total)*100) : 0,
+            stats.laranja.total ? Math.round((stats.laranja.acertos/stats.laranja.total)*100) : 0,
+            stats.vermelho.total ? Math.round((stats.vermelho.acertos/stats.vermelho.total)*100) : 0
           ], backgroundColor:['#1e7e34','#28a745','#ffc107','#fd7e14','#dc3545']}]},
         options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,max:100}}}
       });
     }
 
     function atualizarTabelaUltimas(analises){
-      const tbody = document.querySelector('#ultimasAnalises tbody'); tbody.innerHTML='';
+      const tbody = document.querySelector('#ultimasAnalises tbody');
+      tbody.innerHTML='';
+      if (!analises || analises.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Nenhuma análise recente.</td></tr>';
+        return;
+      }
       analises.forEach(analise=>{
         const row = tbody.insertRow();
         row.innerHTML = `
-          <td>${analise.jogo||'-'}</td>
-          <td><span class="confidence-indicator ${getClasseNivel(analise.nivel_confianca||'')}">${analise.nivel_confianca||'-'}</span></td>
-          <td>${analise.cenario_classificacao||'-'}</td>
-          <td>${analise.previsao_regua||'-'}</td>
-          <td>${analise.resultado_real||'-'}</td>
-          <td>${analise.acerto||'-'}</td>`;
+          <td>${analise.jogo || '-'}</td>
+          <td><span class="confidence-indicator ${getClasseNivel(analise.nivel_confianca || '')}">${analise.nivel_confianca || '-'}</span></td>
+          <td>${analise.cenario_classificacao || '-'}</td>
+          <td>${analise.previsao_regua || '-'}</td>
+          <td>${analise.resultado_real || 'Pendente'}</td>
+          <td>${analise.acerto || 'Pendente'}</td>`;
       });
     }
 
@@ -634,7 +642,6 @@
       return '';
     }
 
-    // ======= NOVA ANÁLISE =======
     document.addEventListener('DOMContentLoaded', ()=>{
       const form = document.getElementById('novaAnaliseForm');
       if (!form) return;
@@ -647,6 +654,7 @@
         const urls = [document.getElementById('url1').value, document.getElementById('url2').value, document.getElementById('url3').value].filter(u=>u.trim());
         if (urls.length===0){ alert('❌ Adicione pelo menos uma URL de notícia!'); return; }
 
+        resetNovaAnaliseView(); // Garante que a view esteja limpa
         document.getElementById('analysisSteps').style.display='block';
         document.getElementById('resultadoAnalise').innerHTML='';
         document.getElementById('analisarBtn').disabled=true;
@@ -655,6 +663,8 @@
           await analisarComRegua3(jogo, campeonato, urls);
         } catch (err) {
           console.error('Erro na análise:', err);
+          updateStep('step5', 'error'); // Marca o erro no passo 5 ou 6
+          updateStep('step6', 'error');
           document.getElementById('resultadoAnalise').innerHTML =
             `<div class="error"><h3>❌ Erro na Análise</h3><p>${err.message}</p><p><small>Verifique o console (F12) para mais detalhes e confirme se a chave OpenAI está configurada corretamente no servidor.</small></p></div>`;
         } finally {
@@ -686,11 +696,11 @@
         if (tgt){
           tgt.innerHTML = `<div class="error"><h3>❌ Erro ao salvar análise</h3><p>${e.message}</p></div>`;
         }
-        throw e; // Lança o erro para ser pego pelo bloco catch principal
+        throw e;
       }
 
       mostrarResultadoAnalise(analiseCompleta);
-      carregarDashboard(); // Atualiza o dashboard com a nova análise
+      carregarDashboard();
     }
 
     function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
@@ -701,21 +711,23 @@
       icon.className = `step-icon step-${status}`;
       if (status==='complete') icon.innerHTML='✓';
       else if (status==='error') icon.innerHTML='✗';
+      else { // pending ou active
+        const stepNumber = stepId.replace('step', '');
+        icon.innerHTML = stepNumber;
+      }
     }
 
     async function extrairConteudoURLs(urls){
       const conteudos=[];
       for (const url of urls){
         try{
-          // Usando um proxy CORS para evitar bloqueios
           const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url )}`);
           if (!response.ok) throw new Error(`Falha na requisição: ${response.statusText}`);
           const data = await response.json();
           const parser = new DOMParser();
           const doc = parser.parseFromString(data.contents,'text/html');
-          // Extrai texto de forma mais limpa, removendo scripts e styles
           doc.querySelectorAll('script, style').forEach(elem => elem.remove());
-          const texto = doc.body.innerText.substring(0,3000); // Limita para não sobrecarregar a API
+          const texto = doc.body.innerText.substring(0,3000);
           conteudos.push({ url, conteudo:texto });
         }catch(e){
           console.error(`Erro ao extrair ${url}:`, e);
@@ -908,7 +920,6 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
 }`;
 
       try{
-        // ATENÇÃO: Substitua pela URL da sua função Netlify/Vercel
         const response = await fetch('/.netlify/functions/openai-analysis', {
           method:'POST',
           headers:{'Content-Type':'application/json'},
@@ -917,10 +928,10 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
               { role:'system', content:'Você é um especialista em análise tática e predição de resultados de futebol. Responda sempre de forma precisa e utilitária, seguindo o formato JSON solicitado.' },
               { role:'user', content: promptCompleto }
             ],
-            model:'gpt-4', // ou 'gpt-4-turbo'
+            model:'gpt-4',
             temperature:0,
             max_tokens:4096,
-            response_format: { "type": "json_object" } // Garante que a resposta seja JSON
+            response_format: { "type": "json_object" }
           })
         });
         if (!response.ok) {
@@ -928,7 +939,6 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
           throw new Error(`Erro na API: ${response.status} - ${errorBody}`);
         }
         const data = await response.json();
-        // A API agora retorna o JSON diretamente no 'content'
         const analiseJSON = JSON.parse(data.choices[0].message.content);
         analiseJSON.jogo = jogo;
         analiseJSON.campeonato = campeonato;
@@ -937,42 +947,32 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
         return analiseJSON;
       } catch (error){
         console.error('Erro na análise OpenAI:', error);
-        throw error; // Lança o erro para ser tratado no bloco catch principal
+        throw error;
       }
     }
 
-    // ==== helper user_id + salvar com RLS ====
     async function getUserId() {
       const { data, error } = await supabase.auth.getUser();
       if (error || !data?.user?.id) return null;
       return data.user.id;
     }
 
-    // =================================================================
-    // >>>>> FUNÇÃO CORRIGIDA PARA SALVAR NO BANCO <<<<<
-    // =================================================================
     async function salvarAnaliseNoBanco(analise){
       const userId = await getUserId();
       if (!userId) {
         throw new Error('Você não está autenticado. Faça login novamente.');
       }
 
-      // OBRIGATÓRIO: Garante que os objetos complexos sejam convertidos para string JSON
-      // antes de enviar para o Supabase. Isso evita erros de tipo de dado.
       const linha = {
         user_id: userId,
         jogo: analise.jogo,
         campeonato: analise.campeonato,
-        urls: analise.urls, // Supabase geralmente lida bem com arrays de texto
-        
-        // --- INÍCIO DA CORREÇÃO ---
+        urls: analise.urls,
         coleta_dados: JSON.stringify(analise.coleta_dados || {}),
         camada1_circunstancial: JSON.stringify(analise.camada1_circunstancial || {}),
         camada2_estrutural: JSON.stringify(analise.camada2_estrutural || {}),
         veredito_final: JSON.stringify(analise.veredito_final || {}),
         recomendacoes: JSON.stringify(analise.recomendacoes || {}),
-        // --- FIM DA CORREÇÃO ---
-
         nivel_confianca: analise.veredito_final?.nivel_confianca || null,
         percentual_confianca: analise.veredito_final?.percentual_confianca ?? null,
         cenario_classificacao: analise.veredito_final?.cenario_classificacao || null,
@@ -986,19 +986,14 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
         .select('id');
 
       if (error) {
-        // O erro detalhado do Supabase aparecerá no console do navegador
-        console.error("Erro detalhado do Supabase:", error); 
+        console.error("Erro detalhado do Supabase:", error);
         throw new Error('Falha ao salvar no banco: ' + (error.message || JSON.stringify(error)));
       }
       
-      // Se chegou aqui, o salvamento foi bem-sucedido
       console.log("Análise salva com sucesso! ID:", data?.[0]?.id);
       return data?.[0]?.id || null;
     }
 
-    // =================================================================
-    // >>>>> NOVA FUNÇÃO PARA MOSTRAR O RESULTADO NA TELA <<<<<
-    // =================================================================
     function mostrarResultadoAnalise(analise){
       const resultadoDiv = document.getElementById('resultadoAnalise');
       if (!resultadoDiv) return;
@@ -1009,17 +1004,21 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
         veredito_final, recomendacoes
       } = analise;
 
-      const [mandante, visitante] = jogo.split('x').map(t => t.trim());
+      // Tratamento para caso 'jogo' não exista na análise (ao ver detalhes de um dado antigo/corrompido)
+      const [mandante, visitante] = (jogo || 'Time A x Time B').split('x').map(t => t.trim());
 
-      // Helper para criar a tabela de critérios
       const criarTabelaCriterios = (dados, titulo) => {
+        // Verifica se 'dados' é um objeto válido
+        if (typeof dados !== 'object' || dados === null) {
+          return `<div class="team-analysis"><h4>${titulo}</h4><p class="error">Dados desta camada não encontrados.</p></div>`;
+        }
         let html = `<div class="team-analysis"><h4>${titulo}</h4><table class="criteria-table"><thead><tr><th>Critério</th><th>Nota</th></tr></thead><tbody>`;
         for (const [key, value] of Object.entries(dados)) {
-          if (key !== 'total' && value.nota !== undefined) {
+          if (key !== 'total' && value && typeof value.nota !== 'undefined') {
             html += `<tr><td>${key.replace(/_/g, ' ')}</td><td class="${getScoreClass(value.nota)}">${value.nota}/10</td></tr>`;
           }
         }
-        html += `</tbody><tfoot><tr><th>Total</th><th>${dados.total}</th></tr></tfoot></table></div>`;
+        html += `</tbody><tfoot><tr><th>Total</th><th>${dados.total || 0}</th></tr></tfoot></table></div>`;
         return html;
       };
 
@@ -1029,13 +1028,13 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
         </div>
 
         <div class="analysis-section">
-          <h2>Veredito Final: ${jogo}</h2>
-          <div class="confidence-indicator ${getClasseNivel(veredito_final.nivel_confianca)}">
-            ${veredito_final.nivel_confianca} (${veredito_final.percentual_confianca}%)
+          <h2>Veredito Final: ${jogo || 'Jogo não identificado'}</h2>
+          <div class="confidence-indicator ${getClasseNivel(veredito_final?.nivel_confianca)}">
+            ${veredito_final?.nivel_confianca || 'N/A'} (${veredito_final?.percentual_confianca || 0}%)
           </div>
-          <p><strong>Cenário:</strong> ${veredito_final.cenario_classificacao}</p>
-          <p><strong>Análise Resumida:</strong> ${veredito_final.analise_final}</p>
-          ${veredito_final.diretrizes_aplicadas && veredito_final.diretrizes_aplicadas.length > 0
+          <p><strong>Cenário:</strong> ${veredito_final?.cenario_classificacao || 'N/A'}</p>
+          <p><strong>Análise Resumida:</strong> ${veredito_final?.analise_final || 'N/A'}</p>
+          ${(veredito_final?.diretrizes_aplicadas && veredito_final.diretrizes_aplicadas.length > 0)
             ? `<p><strong>Diretrizes Aplicadas:</strong> ${veredito_final.diretrizes_aplicadas.join(', ')}</p>`
             : ''
           }
@@ -1044,11 +1043,11 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
         <div class="analysis-section">
           <h3>🎯 Recomendações Práticas</h3>
           <div class="recommendations-grid">
-            <div class="recommendation-card"><h4>Resultado Provável</h4><p>${recomendacoes.resultado_provavel}</p></div>
-            <div class="recommendation-card"><h4>Placares Prováveis</h4><p>${recomendacoes.placares_provaveis.join(' | ')}</p></div>
-            <div class="recommendation-card"><h4>Mercado de Gols</h4><p>${recomendacoes.mercado_gols}</p></div>
-            <div class="recommendation-card"><h4>Ambos Marcam (BTTS)</h4><p>${recomendacoes.ambos_marcam}</p></div>
-            <div class="recommendation-card"><h4>Loteca</h4><p>${recomendacoes.loteca}</p></div>
+            <div class="recommendation-card"><h4>Resultado Provável</h4><p>${recomendacoes?.resultado_provavel || 'N/A'}</p></div>
+            <div class="recommendation-card"><h4>Placares Prováveis</h4><p>${recomendacoes?.placares_provaveis?.join(' | ') || 'N/A'}</p></div>
+            <div class="recommendation-card"><h4>Mercado de Gols</h4><p>${recomendacoes?.mercado_gols || 'N/A'}</p></div>
+            <div class="recommendation-card"><h4>Ambos Marcam (BTTS)</h4><p>${recomendacoes?.ambos_marcam || 'N/A'}</p></div>
+            <div class="recommendation-card"><h4>Loteca</h4><p>${recomendacoes?.loteca || 'N/A'}</p></div>
           </div>
         </div>
 
@@ -1057,17 +1056,18 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
           <div class="analysis-section">
             <h3>📊 Camada 1: Força Circunstancial</h3>
             <div class="layer-analysis">
-              ${criarTabelaCriterios(camada1_circunstancial.mandante, `Mandante: ${mandante}`)}
-              ${criarTabelaCriterios(camada1_circunstancial.visitante, `Visitante: ${visitante}`)}
+              ${criarTabelaCriterios(camada1_circunstancial?.mandante, `Mandante: ${mandante}`)}
+              ${criarTabelaCriterios(camada1_circunstancial?.visitante, `Visitante: ${visitante}`)}
             </div>
-            <p style="text-align:center; margin-top:15px;"><strong>Semáforo do Jogo:</strong> ${camada1_circunstancial.semaforo_jogo}</p>
+            <p style="text-align:center; margin-top:15px;"><strong>Semáforo do Jogo:</strong> ${camada1_circunstancial?.semaforo_jogo || 'N/A'}</p>
           </div>
 
           <div class="analysis-section">
             <h3>🏗️ Camada 2: Força Estrutural</h3>
              <div class="layer-analysis">
-              ${criarTabelaCriterios(camada2_estrutural.mandante, `Mandante: ${mandante}`)}
-              ${criarTabelaCriterios(camada2_estrutural.visitante, `Visitante: ${visitante}`)}
+              ${criarTabelaCriterios(camada2_estrutural?.mandante, `Mandante: ${mandante}`)}
+              ${criarTabelaCriter
+              ${criarTabelaCriterios(camada2_estrutural?.visitante, `Visitante: ${visitante}`)}
             </div>
           </div>
         </div>
@@ -1075,27 +1075,25 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
         <button class="collapsible">Ver Dados Coletados (Pré-Análise)</button>
         <div class="collapsible-content">
            <div class="analysis-section">
-             <p><strong>Posição na Tabela:</strong> ${coleta_dados.posicao_tabela}</p>
-             <p><strong>Últimos Jogos:</strong> ${coleta_dados.ultimos_jogos}</p>
-             
-             <p><strong>Desfalques:</strong> ${coleta_dados.desfalques}</p>
-             <p><strong>Clima Interno:</strong> ${coleta_dados.clima_interno}</p>
-             <p><strong>Histórico de Confrontos:</strong> ${coleta_dados.historico_confrontos}</p>
-             <p><strong>Logística:</strong> ${coleta_dados.logistica}</p>
-             <p><strong>Fontes (URLs):</strong> ${urls.map(u => `<a href="${u}" target="_blank">${u}</a>`).join('  
-')}</p>
+             <p><strong>Posição na Tabela:</strong> ${coleta_dados?.posicao_tabela || 'N/A'}</p>
+             <p><strong>Últimos Jogos:</strong> ${coleta_dados?.ultimos_jogos || 'N/A'}</p>
+             <p><strong>Desfalques:</strong> ${coleta_dados?.desfalques || 'N/A'}</p>
+             <p><strong>Clima Interno:</strong> ${coleta_dados?.clima_interno || 'N/A'}</p>
+             <p><strong>Histórico de Confrontos:</strong> ${coleta_dados?.historico_confrontos || 'N/A'}</p>
+             <p><strong>Logística:</strong> ${coleta_dados?.logistica || 'N/A'}</p>
+             <p><strong>Fontes (URLs):</strong> ${(urls || []).map(u => `<a href="${u}" target="_blank">${u}</a>`).join('  
+') || 'N/A'}</p>
            </div>
         </div>
       `;
 
-      // Reativa os botões "collapsible" que acabaram de ser criados
       inicializarCollapsibles();
     }
 
     function getScoreClass(nota){
       if(nota === undefined || nota === null) return '';
-      if(nota>=8) return 'score-high';
-      if(nota>=6) return 'score-medium';
+      if(nota >= 8) return 'score-high';
+      if(nota >= 6) return 'score-medium';
       return 'score-low';
     }
 
@@ -1109,11 +1107,21 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
         }
 
         const { data: analises, error } = await query;
-        if (error) { console.error('Erro ao buscar histórico:', error); return; }
-        atualizarTabelaHistorico(analises||[]);
-      }catch(e){ console.error('Erro ao carregar histórico:', e); }
+        if (error) {
+          console.error('Erro ao buscar histórico:', error);
+          document.querySelector('#historicoCompleto tbody').innerHTML = `<tr><td colspan="9" class="error">Falha ao carregar o histórico.</td></tr>`;
+          return;
+        }
+        atualizarTabelaHistorico(analises || []);
+      }catch(e){
+        console.error('Erro crítico ao carregar histórico:', e);
+        document.querySelector('#historicoCompleto tbody').innerHTML = `<tr><td colspan="9" class="error">Ocorreu um erro inesperado ao processar o histórico.</td></tr>`;
+      }
     }
 
+    // =================================================================
+    // >>>>> FUNÇÃO CORRIGIDA PARA EVITAR TRAVAMENTO (ROBUSTA) <<<<<
+    // =================================================================
     function atualizarTabelaHistorico(analises){
       const tbody = document.querySelector('#historicoCompleto tbody');
       tbody.innerHTML='';
@@ -1123,13 +1131,16 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
       }
       analises.forEach(a=>{
         const row = tbody.insertRow();
+        // ---- CORREÇÃO DE ROBUSTEZ: Adicionado '|| "-"' para todos os campos para evitar 'null' ou 'undefined' na tela ----
         row.innerHTML = `
-          <td>${a.jogo||'-'}</td><td>${a.campeonato||'-'}</td>
-          <td><span class="confidence-indicator ${getClasseNivel(a.nivel_confianca)}">${a.nivel_confianca||'-'}</span></td>
-          <td>${a.cenario_classificacao||'-'}</td><td>${a.percentual_confianca !== null ? a.percentual_confianca+'%' : '-'}</td>
-          <td>${a.previsao_regua||'-'}</td>
-          <td>${a.resultado_real||'Pendente'}</td>
-          <td>${a.acerto||'Pendente'}</td>
+          <td>${a.jogo || '-'}</td>
+          <td>${a.campeonato || '-'}</td>
+          <td><span class="confidence-indicator ${getClasseNivel(a.nivel_confianca)}">${a.nivel_confianca || '-'}</span></td>
+          <td>${a.cenario_classificacao || '-'}</td>
+          <td>${a.percentual_confianca !== null ? a.percentual_confianca + '%' : '-'}</td>
+          <td>${a.previsao_regua || '-'}</td>
+          <td>${a.resultado_real || 'Pendente'}</td>
+          <td>${a.acerto || 'Pendente'}</td>
           <td><button class="btn" style="padding: 8px 12px;" onclick="verDetalhes('${a.id}')">Detalhes</button></td>`;
       });
     }
@@ -1139,54 +1150,62 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
     }
 
     async function verDetalhes(id){
-      // Esta função agora busca a análise no banco e a exibe na tela
-      const { data, error } = await supabase
-        .from('analises_regua3')
-        .select('*')
-        .eq('id', id)
-        .single(); // .single() para pegar apenas um objeto
+      try {
+        const { data, error } = await supabase
+          .from('analises_regua3')
+          .select('*')
+          .eq('id', id)
+          .single();
 
-      if (error) {
-        alert('Erro ao buscar detalhes da análise: ' + error.message);
-        return;
-      }
+        if (error) {
+          throw new Error('Erro ao buscar detalhes da análise: ' + error.message);
+        }
 
-      // Os dados JSON estão como string, precisamos convertê-los de volta para objetos
-      const analiseCompleta = {
-        ...data,
-        coleta_dados: JSON.parse(data.coleta_dados || '{}'),
-        camada1_circunstancial: JSON.parse(data.camada1_circunstancial || '{}'),
-        camada2_estrutural: JSON.parse(data.camada2_estrutural || '{}'),
-        veredito_final: JSON.parse(data.veredito_final || '{}'),
-        recomendacoes: JSON.parse(data.recomendacoes || '{}'),
-      };
+        // Tenta fazer o parse dos dados JSON. Se falhar, o bloco catch vai pegar.
+        const analiseCompleta = {
+          ...data,
+          coleta_dados: JSON.parse(data.coleta_dados || '{}'),
+          camada1_circunstancial: JSON.parse(data.camada1_circunstancial || '{}'),
+          camada2_estrutural: JSON.parse(data.camada2_estrutural || '{}'),
+          veredito_final: JSON.parse(data.veredito_final || '{}'),
+          recomendacoes: JSON.parse(data.recomendacoes || '{}'),
+        };
 
-      // Reutiliza a função de mostrar resultado, mas em um modal ou na própria aba
-      showTab('nova-analise'); // Vai para a aba de análise
-      document.getElementById('analysisSteps').style.display = 'none'; // Esconde os steps
-      document.getElementById('novaAnaliseForm').style.display = 'none'; // Esconde o formulário
-      
-      const resultadoDiv = document.getElementById('resultadoAnalise');
-      resultadoDiv.innerHTML = `<h2>Detalhes da Análise Salva</h2>`; // Adiciona um título
-      mostrarResultadoAnalise(analiseCompleta);
+        showTab('nova-analise');
+        document.getElementById('analysisSteps').style.display = 'none';
+        document.getElementById('novaAnaliseForm').style.display = 'none';
+        
+        const resultadoDiv = document.getElementById('resultadoAnalise');
+        resultadoDiv.innerHTML = `<h2>Detalhes da Análise Salva</h2>`;
+        mostrarResultadoAnalise(analiseCompleta);
 
-      // Adiciona um botão para voltar ao formulário
-      resultadoDiv.innerHTML += `  
+        resultadoDiv.innerHTML += `  
 <button class="btn btn-outline" onclick="resetNovaAnaliseView()">Fazer Nova Análise</button>`;
+
+      } catch (e) {
+        console.error("Erro ao processar detalhes da análise:", e);
+        alert("Não foi possível carregar os detalhes desta análise. O registro pode estar corrompido. Verifique o console para mais informações.");
+        // Leva para a aba de análise e mostra um erro lá
+        showTab('nova-analise');
+        const resultadoDiv = document.getElementById('resultadoAnalise');
+        resultadoDiv.innerHTML = `<div class="error"><h3>Erro ao carregar detalhes</h3><p>${e.message}</p><p>Este registro de análise pode estar corrompido no banco de dados.</p></div>
+          
+<button class="btn btn-outline" onclick="resetNovaAnaliseView()">Voltar</button>`;
+      }
     }
 
     function resetNovaAnaliseView() {
       document.getElementById('novaAnaliseForm').style.display = 'block';
       document.getElementById('resultadoAnalise').innerHTML = '';
       document.getElementById('analysisSteps').style.display = 'none';
-      // Reseta os ícones dos steps para o estado inicial
+      document.getElementById('jogoInput').value = '';
+      document.getElementById('campeonatoInput').value = '';
+      document.getElementById('url1').value = '';
+      document.getElementById('url2').value = '';
+      document.getElementById('url3').value = '';
+      
       for(let i = 1; i <= 6; i++) {
-        const step = document.getElementById(`step${i}`);
-        if (step) {
-          const icon = step.querySelector('.step-icon');
-          icon.className = 'step-icon step-pending';
-          icon.innerHTML = i;
-        }
+        updateStep(`step${i}`, 'pending');
       }
     }
 
