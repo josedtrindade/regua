@@ -534,7 +534,7 @@
     }
 
     async function analisarConteudoComRegua3(jogo, campeonato, conteudos, urls){
-      const promptCompleto = const promptCompleto = `Você é um Analista de Futebol Sênior, autônomo e proativo. Sua tarefa é realizar uma análise completa de uma partida de futebol usando a metodologia "Régua 3.0 - Análise de Dupla Camada".
+      const promptCompleto = `Você é um Analista de Futebol Sênior, autônomo e proativo. Sua tarefa é realizar uma análise completa de uma partida de futebol usando a metodologia "Régua 3.0 - Análise de Dupla Camada".
 
 DADOS DA PARTIDA:
 Campeonato: ${campeonato}
@@ -565,7 +565,7 @@ Ação: Classificar como "Risco Imponderável"; evitar palpite seco; na Loteca s
 
 Diretriz 6: "Ressaca Heroica"
 Cenário: Time vem de grande feito na semana (classificação/título/clássico) e enfrenta adversário teoricamente mais fraco, principalmente fora.
-Ação: D (Psicológico) moderado (6-7/10), classificar como “Risco de Complacência”; evitar aposta seca; preferir Duplo Aberto (12) ou até Triplo.
+Ação: D (Psicológico) moderado (6-7/10), classificar como "Risco de Complacência"; evitar aposta seca; preferir Duplo Aberto (12) ou até Triplo.
 
 Diretriz 7: "Reversão à Média (Despertar do Gigante)"
 Cenário: Elenco superior (Critério 1 ≥ 8) em jejum de 5+ jogos vs. elenco inferior em boa fase.
@@ -611,7 +611,7 @@ G. Elenco/Estratégia Tática (encaixe para este confronto)
 H. Forma Recente
 I. Confronto Direto
 J. Logística/Fadiga
-Em cada time, some um total (0–90) e apresente um “Semáforo do Jogo”.
+Em cada time, some um total (0–90) e apresente um "Semáforo do Jogo".
 
 PASSO 2: CAMADA 2 — FORÇA ESTRUTURAL (Índice Prático, ponderado)
 Para cada time:
@@ -619,7 +619,7 @@ Para cada time:
 2. Consistência / Padrão Tático (Peso 2)
 3. Resiliência Mental (Peso 2)
 4. Fator Técnico/Gerencial (Peso 1)
-Apresente “total_ponderado” (0–80).
+Apresente "total_ponderado" (0–80).
 
 PASSO 3: VEREDITO FINAL — CONFLITOS e CENÁRIO
 Compare Camada 1 x Camada 2 e determine:
@@ -714,7 +714,6 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
     "loteca": "string"
   }
 }`;
-;
 
       try{
         const response = await fetch('/.netlify/functions/openai-analysis', {
