@@ -1083,8 +1083,10 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
              <p><strong>Logística:</strong> ${coleta_dados?.logistica || 'N/A'}</p>
              
              <!-- LINHA CORRIGIDA ABAIXO -->
-             <p><strong>Fontes (URLs):</strong> ${(urls || []).map(u => `<a href="${u}" target="_blank">${u}</a>`).join('  
+             // Linha CORRIGIDA
+<p><strong>Fontes (URLs):</strong> ${(urls || []).map(u => `<a href="${u}" target="_blank">${u}</a>`).join('  
 ') || 'N/A'}</p>
+
            </div>
         </div>
       `;
