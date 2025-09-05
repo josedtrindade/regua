@@ -383,10 +383,15 @@
       }
     }
 
-    // ======= FUNÇÃO PARA MOSTRAR LOGIN =======
-    function showLogin() {
-      document.getElementById('landing').style.display = 'none';
-      document.getElementById('auth').style.display = 'block';
+    // >>>>>> TRECHO SOLICITADO (logo depois de refreshUI) <<<<<<
+    function showLogin(){
+      // rola até o bloco de login quando o usuário clica em "Começar agora"
+      const authEl = document.getElementById('auth');
+      if (!authEl) return;
+      authEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // foca no e-mail para agilizar
+      const email = document.getElementById('email');
+      if (email) setTimeout(()=>email.focus(), 300);
     }
 
     function configurarAutenticacao(){
