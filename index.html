@@ -28,6 +28,8 @@
     .form-group input:focus,.form-group textarea:focus,.form-group select:focus{outline:none;border-color:#667eea}
     .btn{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:12px 30px;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;transition:transform .2s}
     .btn:hover{transform:translateY(-2px)}.btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+    .btn-outline{background:transparent;border:2px solid #667eea;color:#667eea}
+    .btn-outline:hover{background:#667eea;color:#fff}
     .url-inputs{display:grid;gap:15px;margin-bottom:20px}
     .confidence-indicator{padding:10px;border-radius:8px;margin:10px 0;font-weight:600;text-align:center}
     .verde-escuro{background:#1e7e34;color:#fff}.verde-claro{background:#28a745;color:#fff}.amarelo{background:#ffc107;color:#333}.laranja{background:#fd7e14;color:#fff}.vermelho{background:#dc3545;color:#fff}
@@ -58,6 +60,19 @@
     .collapsible-content{padding:0 15px;max-height:0;overflow:hidden;transition:max-height .2s ease-out;background:#fff;border-radius:0 0 5px 5px}
     .collapsible-content.active{padding:15px;max-height:1000px}
 
+    /* ====== LANDING PAGE ====== */
+    #landing{max-width:1200px;margin:0 auto;padding:40px 20px;color:#fff}
+    .landing-hero{text-align:center;margin-bottom:60px}
+    .landing-hero h1{font-size:3rem;margin-bottom:20px;font-weight:700}
+    .landing-hero p{font-size:1.3rem;margin-bottom:30px;opacity:.9}
+    .cta-buttons{display:flex;gap:20px;justify-content:center;margin-bottom:40px;flex-wrap:wrap}
+    .badges{display:flex;gap:15px;justify-content:center;flex-wrap:wrap}
+    .badges span{background:rgba(255,255,255,.2);padding:8px 16px;border-radius:20px;font-size:.9rem}
+    .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:30px}
+    .feature-card{background:rgba(255,255,255,.1);padding:30px;border-radius:15px;text-align:center;backdrop-filter:blur(10px)}
+    .feature-card h3{font-size:1.5rem;margin-bottom:15px;color:#fff}
+    .feature-card p{opacity:.9;line-height:1.6}
+
     /* ====== BLOCO DE LOGIN ====== */
     #auth{max-width:480px;margin:20px auto;background:#fff;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,.12);padding:20px}
     #auth h2{margin-bottom:10px}
@@ -77,6 +92,38 @@
       <button class="btn" id="btn-logout" style="padding:8px 14px">Sair</button>
     </div>
   </div>
+
+  <!-- LANDING (visível quando NÃO logado) -->
+  <section id="landing" style="display:none">
+    <div class="landing-hero">
+      <h1>Régua 3.0 – Análises profissionais para apostar com método</h1>
+      <p>Metodologia de Dupla Camada com 12 diretrizes. Leia o jogo como um analista — sem achismo.</p>
+      <div class="cta-buttons">
+        <button class="btn" onclick="showLogin()">Começar agora</button>
+        <a class="btn btn-outline" href="#metodologia">Ver metodologia</a>
+      </div>
+      <div class="badges">
+        <span>✔️ Dupla Camada</span>
+        <span>✔️ Regras de Zebra e Volatilidade</span>
+        <span>✔️ Recomendações por mercado</span>
+      </div>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>📊 Camada 1 – Circunstancial</h3>
+        <p>9 critérios (motivação, desfalques, psicológico, logística...) com justificativas.</p>
+      </div>
+      <div class="feature-card">
+        <h3>🏗️ Camada 2 – Estrutural</h3>
+        <p>4 critérios ponderados (elenco, padrão tático, resiliência, técnico/gestão).</p>
+      </div>
+      <div class="feature-card">
+        <h3>🎯 Veredito + Cores</h3>
+        <p>Classificação Verde/Vermelho com % de confiança e recomendações (1X, X2, 12, Triplo).</p>
+      </div>
+    </div>
+  </section>
 
   <!-- BLOCO DE LOGIN (visível quando NÃO logado) -->
   <div id="auth" style="display:none">
@@ -291,9 +338,11 @@
       const appEl    = document.getElementById('app');
       const topbar   = document.getElementById('topbar');
       const whoami   = document.getElementById('whoami');
+      const landingEl = document.getElementById('landing');
 
       if (logged) {
         authEl.style.display = 'none';
+        landingEl.style.display = 'none';
         appEl.style.display  = 'block';
         topbar.style.display = 'flex';
         statusEl.textContent = 'Logado';
@@ -301,9 +350,16 @@
       } else {
         appEl.style.display  = 'none';
         topbar.style.display = 'none';
-        authEl.style.display = 'block';
+        authEl.style.display = 'none';
+        landingEl.style.display = 'block';
         statusEl.textContent = 'Não logado';
       }
+    }
+
+    // ======= FUNÇÃO PARA MOSTRAR LOGIN =======
+    function showLogin() {
+      document.getElementById('landing').style.display = 'none';
+      document.getElementById('auth').style.display = 'block';
     }
 
     function configurarAutenticacao(){
