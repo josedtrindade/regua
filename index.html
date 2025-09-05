@@ -994,6 +994,9 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
       return data?.[0]?.id || null;
     }
 
+    // =================================================================
+    // >>>>> FUNÇÃO CORRIGIDA (CORREÇÃO DO SYNTAX ERROR) <<<<<
+    // =================================================================
     function mostrarResultadoAnalise(analise){
       const resultadoDiv = document.getElementById('resultadoAnalise');
       if (!resultadoDiv) return;
@@ -1004,11 +1007,9 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
         veredito_final, recomendacoes
       } = analise;
 
-      // Tratamento para caso 'jogo' não exista na análise (ao ver detalhes de um dado antigo/corrompido)
       const [mandante, visitante] = (jogo || 'Time A x Time B').split('x').map(t => t.trim());
 
       const criarTabelaCriterios = (dados, titulo) => {
-        // Verifica se 'dados' é um objeto válido
         if (typeof dados !== 'object' || dados === null) {
           return `<div class="team-analysis"><h4>${titulo}</h4><p class="error">Dados desta camada não encontrados.</p></div>`;
         }
@@ -1066,7 +1067,6 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
             <h3>🏗️ Camada 2: Força Estrutural</h3>
              <div class="layer-analysis">
               ${criarTabelaCriterios(camada2_estrutural?.mandante, `Mandante: ${mandante}`)}
-              ${criarTabelaCriter
               ${criarTabelaCriterios(camada2_estrutural?.visitante, `Visitante: ${visitante}`)}
             </div>
           </div>
@@ -1081,6 +1081,8 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
              <p><strong>Clima Interno:</strong> ${coleta_dados?.clima_interno || 'N/A'}</p>
              <p><strong>Histórico de Confrontos:</strong> ${coleta_dados?.historico_confrontos || 'N/A'}</p>
              <p><strong>Logística:</strong> ${coleta_dados?.logistica || 'N/A'}</p>
+             
+             <!-- LINHA CORRIGIDA ABAIXO -->
              <p><strong>Fontes (URLs):</strong> ${(urls || []).map(u => `<a href="${u}" target="_blank">${u}</a>`).join('  
 ') || 'N/A'}</p>
            </div>
