@@ -385,13 +385,18 @@
 
     // >>>>>> TRECHO SOLICITADO (logo depois de refreshUI) <<<<<<
     function showLogin(){
-      // rola até o bloco de login quando o usuário clica em "Começar agora"
+      // mostra o bloco de login e oculta a landing
+      const landingEl = document.getElementById('landing');
       const authEl = document.getElementById('auth');
-      if (!authEl) return;
-      authEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      // foca no e-mail para agilizar
-      const email = document.getElementById('email');
-      if (email) setTimeout(()=>email.focus(), 300);
+      if (landingEl) landingEl.style.display = 'none';
+      if (authEl) {
+        authEl.style.display = 'block';
+        // rola até o bloco de login
+        authEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // foca no e-mail para agilizar
+        const email = document.getElementById('email');
+        if (email) setTimeout(()=>email.focus(), 200);
+      }
     }
 
     function configurarAutenticacao(){
@@ -403,15 +408,46 @@
 
       // Ações dos botões
       document.getElementById('btn-signup').onclick = async () => {
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
+        const emailEl = document.getElementById('email');
+        const passEl  = document.getElementById('password');
+
+        const email = (emailEl?.value || '').trim();
+        const password = passEl?.value || '';
+
+        // validações
+        if (!email) { alert('Por favor, informe um e-mail válido.'); emailEl?.focus(); return; }
+        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        if (!emailOk) { alert('E-mail parece inválido.'); emailEl?.focus(); return; }
+
+        if (!password || password.length < 6) {
+          alert('Defina uma senha com pelo menos 6 caracteres.');
+          passEl?.focus(); return;
+        }
+
         const { error } = await supabase.auth.signUp({ email, password });
-        alert(error ? error.message : 'Cadastro criado! Confirme seu e-mail para ativar a conta.');
+
+        if (error) {
+          const msg = String(error.message || '').toLowerCase();
+          if (msg.includes('anonymous')) {
+            alert('Preencha e-mail e senha. Cadastros anônimos estão desativados.');
+          } else {
+            alert(error.message);
+          }
+          return;
+        }
+
+        alert('Cadastro criado! Confirme seu e-mail para ativar a conta.');
       };
 
       document.getElementById('btn-login').onclick = async () => {
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
+        const email = (document.getElementById('email')?.value || '').trim();
+        const password = document.getElementById('password')?.value || '';
+
+        if (!email || !password) {
+          alert('Informe e-mail e senha para entrar.');
+          return;
+        }
+
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) alert(error.message);
       };
