@@ -8,7 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;color:#333}
+    body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100% );min-height:100vh;color:#333}
     .container{max-width:1400px;margin:0 auto;padding:20px}
     .header{text-align:center;color:white;margin-bottom:30px}
     .header h1{font-size:2.5rem;margin-bottom:10px}
@@ -255,11 +255,11 @@
                 <input type="url" id="url1" placeholder="https://globoesporte.globo.com/..." required>
               </div>
               <div class="form-group">
-                <label>📰 URL Notícia 2 (opcional)</label>
+                <label>📰 URL Notícia 2 (opcional )</label>
                 <input type="url" id="url2" placeholder="https://espn.com.br/...">
               </div>
               <div class="form-group">
-                <label>📰 URL Notícia 3 (opcional)</label>
+                <label>📰 URL Notícia 3 (opcional )</label>
                 <input type="url" id="url3" placeholder="https://lance.com.br/...">
               </div>
             </div>
@@ -271,7 +271,7 @@
             <h4>🔄 Progresso da Análise:</h4>
             <div class="step" id="step1"><div class="step-icon step-pending">1</div><span>Coletando dados das URLs...</span></div>
             <div class="step" id="step2"><div class="step-icon step-pending">2</div><span>Aplicando as 12 diretrizes de ponderação...</span></div>
-            <div class="step" id="step3"><div class="step-icon step-pending">3</div><span>Executando Camada 1 (9 critérios circunstanciais)...</span></div>
+            <div class="step" id="step3"><div class="step-icon step-pending">3</div><span>Executando Camada 1 (9 critérios circunstanciais )...</span></div>
             <div class="step" id="step4"><div class="step-icon step-pending">4</div><span>Executando Camada 2 (4 critérios estruturais)...</span></div>
             <div class="step" id="step5"><div class="step-icon step-pending">5</div><span>Gerando veredito final e recomendações...</span></div>
             <div class="step" id="step6"><div class="step-icon step-pending">6</div><span>Salvando análise completa...</span></div>
@@ -329,7 +329,7 @@
     let supabase = null;
 
     // ======= BOOT =======
-    document.addEventListener('DOMContentLoaded', async () => {
+    document.addEventListener('DOMContentLoaded', async ( ) => {
       inicializarSupabase();              // cria o client
       configurarAutenticacao();           // listeners de auth
       await refreshUI();                  // mostra login ou app
@@ -501,11 +501,12 @@
         const emailEl = document.getElementById('email');
         const email = (emailEl?.value || '').trim();
         if (!email) { showFieldError(emailEl,'Digite seu e-mail antes.','emailHelp'); return; }
-        const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: 'https://regua.netlify.app/reset' });
+        const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: 'https://regua.netlify.app/reset' } );
         if (error) {
           showFieldError(emailEl, error.message || 'Não foi possível enviar o e-mail.', 'emailHelp');
         } else {
           const help = document.getElementById('emailHelp');
+          
           if (help){ help.textContent = 'Enviamos um e-mail com o link para redefinir sua senha.'; help.classList.add('show'); }
         }
       };
@@ -624,6 +625,7 @@
     }
 
     function getClasseNivel(nivel){
+      if (!nivel) return '';
       if (nivel.includes('Verde Escuro')) return 'verde-escuro';
       if (nivel.includes('Verde Claro')) return 'verde-claro';
       if (nivel.includes('Amarelo')) return 'amarelo';
@@ -654,7 +656,7 @@
         } catch (err) {
           console.error('Erro na análise:', err);
           document.getElementById('resultadoAnalise').innerHTML =
-            `<div class="error"><h3>❌ Erro na Análise</h3><p>${err.message}</p><p><small>Verifique se a chave OpenAI está configurada corretamente.</small></p></div>`;
+            `<div class="error"><h3>❌ Erro na Análise</h3><p>${err.message}</p><p><small>Verifique o console (F12) para mais detalhes e confirme se a chave OpenAI está configurada corretamente no servidor.</small></p></div>`;
         } finally {
           document.getElementById('analisarBtn').disabled=false;
         }
@@ -684,11 +686,11 @@
         if (tgt){
           tgt.innerHTML = `<div class="error"><h3>❌ Erro ao salvar análise</h3><p>${e.message}</p></div>`;
         }
-        throw e;
+        throw e; // Lança o erro para ser pego pelo bloco catch principal
       }
 
       mostrarResultadoAnalise(analiseCompleta);
-      carregarDashboard();
+      carregarDashboard(); // Atualiza o dashboard com a nova análise
     }
 
     function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
@@ -705,15 +707,19 @@
       const conteudos=[];
       for (const url of urls){
         try{
-          const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+          // Usando um proxy CORS para evitar bloqueios
+          const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url )}`);
+          if (!response.ok) throw new Error(`Falha na requisição: ${response.statusText}`);
           const data = await response.json();
           const parser = new DOMParser();
           const doc = parser.parseFromString(data.contents,'text/html');
-          const texto = doc.body.innerText.substring(0,3000);
+          // Extrai texto de forma mais limpa, removendo scripts e styles
+          doc.querySelectorAll('script, style').forEach(elem => elem.remove());
+          const texto = doc.body.innerText.substring(0,3000); // Limita para não sobrecarregar a API
           conteudos.push({ url, conteudo:texto });
         }catch(e){
           console.error(`Erro ao extrair ${url}:`, e);
-          conteudos.push({ url, conteudo:'Erro ao extrair conteúdo' });
+          conteudos.push({ url, conteudo:'Erro ao extrair conteúdo. Verifique o console.' });
         }
       }
       return conteudos;
@@ -902,32 +908,36 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
 }`;
 
       try{
+        // ATENÇÃO: Substitua pela URL da sua função Netlify/Vercel
         const response = await fetch('/.netlify/functions/openai-analysis', {
           method:'POST',
           headers:{'Content-Type':'application/json'},
           body:JSON.stringify({
             messages:[
-              { role:'system', content:'Você é um especialista em análise tática e predição de resultados de futebol. Responda sempre de forma precisa e utilitária.' },
+              { role:'system', content:'Você é um especialista em análise tática e predição de resultados de futebol. Responda sempre de forma precisa e utilitária, seguindo o formato JSON solicitado.' },
               { role:'user', content: promptCompleto }
             ],
-            model:'gpt-4', temperature:0, max_tokens:4096
+            model:'gpt-4', // ou 'gpt-4-turbo'
+            temperature:0,
+            max_tokens:4096,
+            response_format: { "type": "json_object" } // Garante que a resposta seja JSON
           })
         });
-        if (!response.ok) throw new Error('Erro na API: '+response.status);
+        if (!response.ok) {
+          const errorBody = await response.text();
+          throw new Error(`Erro na API: ${response.status} - ${errorBody}`);
+        }
         const data = await response.json();
-        const analiseTexto = data.choices[0].message.content;
-        const analiseJSON = JSON.parse(analiseTexto);
-        analiseJSON.jogo = jogo; analiseJSON.campeonato = campeonato; analiseJSON.urls = urls; analiseJSON.timestamp = new Date().toISOString();
+        // A API agora retorna o JSON diretamente no 'content'
+        const analiseJSON = JSON.parse(data.choices[0].message.content);
+        analiseJSON.jogo = jogo;
+        analiseJSON.campeonato = campeonato;
+        analiseJSON.urls = urls;
+        analiseJSON.timestamp = new Date().toISOString();
         return analiseJSON;
       } catch (error){
         console.error('Erro na análise OpenAI:', error);
-        // Fallback opcional:
-        return {
-          jogo, campeonato, urls,
-          coleta_dados:{}, camada1_circunstancial:{}, camada2_estrutural:{},
-          veredito_final:{ nivel_confianca:'Vermelho (<60%)', percentual_confianca: 55, cenario_classificacao:'Miolo Perigosíssimo', diretrizes_aplicadas:[], analise_final:'Falha ao obter análise' },
-          recomendacoes:{ resultado_provavel:'Triplo (1X2)', placares_provaveis:['0x0','1x1','1x2'], mercado_gols:'Under 3.5', ambos_marcam:'Talvez', loteca:'Triplo' }
-        };
+        throw error; // Lança o erro para ser tratado no bloco catch principal
       }
     }
 
@@ -938,22 +948,31 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
       return data.user.id;
     }
 
+    // =================================================================
+    // >>>>> FUNÇÃO CORRIGIDA PARA SALVAR NO BANCO <<<<<
+    // =================================================================
     async function salvarAnaliseNoBanco(analise){
       const userId = await getUserId();
       if (!userId) {
         throw new Error('Você não está autenticado. Faça login novamente.');
       }
 
+      // OBRIGATÓRIO: Garante que os objetos complexos sejam convertidos para string JSON
+      // antes de enviar para o Supabase. Isso evita erros de tipo de dado.
       const linha = {
         user_id: userId,
         jogo: analise.jogo,
         campeonato: analise.campeonato,
-        urls: analise.urls,
-        coleta_dados: analise.coleta_dados,
-        camada1_circunstancial: analise.camada1_circunstancial,
-        camada2_estrutural: analise.camada2_estrutural,
-        veredito_final: analise.veredito_final,
-        recomendacoes: analise.recomendacoes,
+        urls: analise.urls, // Supabase geralmente lida bem com arrays de texto
+        
+        // --- INÍCIO DA CORREÇÃO ---
+        coleta_dados: JSON.stringify(analise.coleta_dados || {}),
+        camada1_circunstancial: JSON.stringify(analise.camada1_circunstancial || {}),
+        camada2_estrutural: JSON.stringify(analise.camada2_estrutural || {}),
+        veredito_final: JSON.stringify(analise.veredito_final || {}),
+        recomendacoes: JSON.stringify(analise.recomendacoes || {}),
+        // --- FIM DA CORREÇÃO ---
+
         nivel_confianca: analise.veredito_final?.nivel_confianca || null,
         percentual_confianca: analise.veredito_final?.percentual_confianca ?? null,
         cenario_classificacao: analise.veredito_final?.cenario_classificacao || null,
@@ -967,43 +986,210 @@ Responda OBRIGATORIAMENTE em JSON com esta estrutura:
         .select('id');
 
       if (error) {
+        // O erro detalhado do Supabase aparecerá no console do navegador
+        console.error("Erro detalhado do Supabase:", error); 
         throw new Error('Falha ao salvar no banco: ' + (error.message || JSON.stringify(error)));
       }
+      
+      // Se chegou aqui, o salvamento foi bem-sucedido
+      console.log("Análise salva com sucesso! ID:", data?.[0]?.id);
       return data?.[0]?.id || null;
     }
 
+    // =================================================================
+    // >>>>> NOVA FUNÇÃO PARA MOSTRAR O RESULTADO NA TELA <<<<<
+    // =================================================================
     function mostrarResultadoAnalise(analise){
-      const resultado = document.getElementById('resultadoAnalise');
-      // aqui você pode renderizar a saída em cards/tabelas conforme seu template preferido
-      // reativar collapsibles, se usados:
+      const resultadoDiv = document.getElementById('resultadoAnalise');
+      if (!resultadoDiv) return;
+
+      const {
+        jogo, campeonato, urls,
+        coleta_dados, camada1_circunstancial, camada2_estrutural,
+        veredito_final, recomendacoes
+      } = analise;
+
+      const [mandante, visitante] = jogo.split('x').map(t => t.trim());
+
+      // Helper para criar a tabela de critérios
+      const criarTabelaCriterios = (dados, titulo) => {
+        let html = `<div class="team-analysis"><h4>${titulo}</h4><table class="criteria-table"><thead><tr><th>Critério</th><th>Nota</th></tr></thead><tbody>`;
+        for (const [key, value] of Object.entries(dados)) {
+          if (key !== 'total' && value.nota !== undefined) {
+            html += `<tr><td>${key.replace(/_/g, ' ')}</td><td class="${getScoreClass(value.nota)}">${value.nota}/10</td></tr>`;
+          }
+        }
+        html += `</tbody><tfoot><tr><th>Total</th><th>${dados.total}</th></tr></tfoot></table></div>`;
+        return html;
+      };
+
+      resultadoDiv.innerHTML = `
+        <div class="success">
+          <h3>✅ Análise Concluída com Sucesso!</h3>
+        </div>
+
+        <div class="analysis-section">
+          <h2>Veredito Final: ${jogo}</h2>
+          <div class="confidence-indicator ${getClasseNivel(veredito_final.nivel_confianca)}">
+            ${veredito_final.nivel_confianca} (${veredito_final.percentual_confianca}%)
+          </div>
+          <p><strong>Cenário:</strong> ${veredito_final.cenario_classificacao}</p>
+          <p><strong>Análise Resumida:</strong> ${veredito_final.analise_final}</p>
+          ${veredito_final.diretrizes_aplicadas && veredito_final.diretrizes_aplicadas.length > 0
+            ? `<p><strong>Diretrizes Aplicadas:</strong> ${veredito_final.diretrizes_aplicadas.join(', ')}</p>`
+            : ''
+          }
+        </div>
+
+        <div class="analysis-section">
+          <h3>🎯 Recomendações Práticas</h3>
+          <div class="recommendations-grid">
+            <div class="recommendation-card"><h4>Resultado Provável</h4><p>${recomendacoes.resultado_provavel}</p></div>
+            <div class="recommendation-card"><h4>Placares Prováveis</h4><p>${recomendacoes.placares_provaveis.join(' | ')}</p></div>
+            <div class="recommendation-card"><h4>Mercado de Gols</h4><p>${recomendacoes.mercado_gols}</p></div>
+            <div class="recommendation-card"><h4>Ambos Marcam (BTTS)</h4><p>${recomendacoes.ambos_marcam}</p></div>
+            <div class="recommendation-card"><h4>Loteca</h4><p>${recomendacoes.loteca}</p></div>
+          </div>
+        </div>
+
+        <button class="collapsible">Ver Análise de Dupla Camada (Detalhes)</button>
+        <div class="collapsible-content">
+          <div class="analysis-section">
+            <h3>📊 Camada 1: Força Circunstancial</h3>
+            <div class="layer-analysis">
+              ${criarTabelaCriterios(camada1_circunstancial.mandante, `Mandante: ${mandante}`)}
+              ${criarTabelaCriterios(camada1_circunstancial.visitante, `Visitante: ${visitante}`)}
+            </div>
+            <p style="text-align:center; margin-top:15px;"><strong>Semáforo do Jogo:</strong> ${camada1_circunstancial.semaforo_jogo}</p>
+          </div>
+
+          <div class="analysis-section">
+            <h3>🏗️ Camada 2: Força Estrutural</h3>
+             <div class="layer-analysis">
+              ${criarTabelaCriterios(camada2_estrutural.mandante, `Mandante: ${mandante}`)}
+              ${criarTabelaCriterios(camada2_estrutural.visitante, `Visitante: ${visitante}`)}
+            </div>
+          </div>
+        </div>
+
+        <button class="collapsible">Ver Dados Coletados (Pré-Análise)</button>
+        <div class="collapsible-content">
+           <div class="analysis-section">
+             <p><strong>Posição na Tabela:</strong> ${coleta_dados.posicao_tabela}</p>
+             <p><strong>Últimos Jogos:</strong> ${coleta_dados.ultimos_jogos}</p>
+             
+             <p><strong>Desfalques:</strong> ${coleta_dados.desfalques}</p>
+             <p><strong>Clima Interno:</strong> ${coleta_dados.clima_interno}</p>
+             <p><strong>Histórico de Confrontos:</strong> ${coleta_dados.historico_confrontos}</p>
+             <p><strong>Logística:</strong> ${coleta_dados.logistica}</p>
+             <p><strong>Fontes (URLs):</strong> ${urls.map(u => `<a href="${u}" target="_blank">${u}</a>`).join('  
+')}</p>
+           </div>
+        </div>
+      `;
+
+      // Reativa os botões "collapsible" que acabaram de ser criados
       inicializarCollapsibles();
     }
 
-    function getScoreClass(nota){ if(nota>=8) return 'score-high'; if(nota>=6) return 'score-medium'; return 'score-low'; }
+    function getScoreClass(nota){
+      if(nota === undefined || nota === null) return '';
+      if(nota>=8) return 'score-high';
+      if(nota>=6) return 'score-medium';
+      return 'score-low';
+    }
 
     async function carregarHistorico(){
       try{
-        const { data: analises, error } = await supabase.from('analises_regua3').select('*').order('created_at',{ascending:false});
+        const filtro = document.getElementById('filtroNivel').value;
+        let query = supabase.from('analises_regua3').select('*').order('created_at',{ascending:false});
+
+        if (filtro) {
+          query = query.like('nivel_confianca', `%${filtro}%`);
+        }
+
+        const { data: analises, error } = await query;
         if (error) { console.error('Erro ao buscar histórico:', error); return; }
         atualizarTabelaHistorico(analises||[]);
       }catch(e){ console.error('Erro ao carregar histórico:', e); }
     }
 
     function atualizarTabelaHistorico(analises){
-      const tbody = document.querySelector('#historicoCompleto tbody'); tbody.innerHTML='';
+      const tbody = document.querySelector('#historicoCompleto tbody');
+      tbody.innerHTML='';
+      if (!analises || analises.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">Nenhuma análise encontrada.</td></tr>';
+        return;
+      }
       analises.forEach(a=>{
         const row = tbody.insertRow();
         row.innerHTML = `
           <td>${a.jogo||'-'}</td><td>${a.campeonato||'-'}</td>
-          <td><span class="confidence-indicator ${getClasseNivel(a.nivel_confianca||'')}">${a.nivel_confianca||'-'}</span></td>
-          <td>${a.cenario_classificacao||'-'}</td><td>${a.percentual_confianca||'-'}%</td>
-          <td>${a.previsao_regua||'-'}</td><td>${a.resultado_real||'-'}</td><td>${a.acerto||'-'}</td>
-          <td><button class="btn" onclick="verDetalhes('${a.id}')">Ver Detalhes</button></td>`;
+          <td><span class="confidence-indicator ${getClasseNivel(a.nivel_confianca)}">${a.nivel_confianca||'-'}</span></td>
+          <td>${a.cenario_classificacao||'-'}</td><td>${a.percentual_confianca !== null ? a.percentual_confianca+'%' : '-'}</td>
+          <td>${a.previsao_regua||'-'}</td>
+          <td>${a.resultado_real||'Pendente'}</td>
+          <td>${a.acerto||'Pendente'}</td>
+          <td><button class="btn" style="padding: 8px 12px;" onclick="verDetalhes('${a.id}')">Detalhes</button></td>`;
       });
     }
 
-    function filtrarHistorico(){ carregarHistorico(); }
-    function verDetalhes(id){ alert(`Ver detalhes da análise ${id}`); }
+    function filtrarHistorico(){
+      carregarHistorico();
+    }
+
+    async function verDetalhes(id){
+      // Esta função agora busca a análise no banco e a exibe na tela
+      const { data, error } = await supabase
+        .from('analises_regua3')
+        .select('*')
+        .eq('id', id)
+        .single(); // .single() para pegar apenas um objeto
+
+      if (error) {
+        alert('Erro ao buscar detalhes da análise: ' + error.message);
+        return;
+      }
+
+      // Os dados JSON estão como string, precisamos convertê-los de volta para objetos
+      const analiseCompleta = {
+        ...data,
+        coleta_dados: JSON.parse(data.coleta_dados || '{}'),
+        camada1_circunstancial: JSON.parse(data.camada1_circunstancial || '{}'),
+        camada2_estrutural: JSON.parse(data.camada2_estrutural || '{}'),
+        veredito_final: JSON.parse(data.veredito_final || '{}'),
+        recomendacoes: JSON.parse(data.recomendacoes || '{}'),
+      };
+
+      // Reutiliza a função de mostrar resultado, mas em um modal ou na própria aba
+      showTab('nova-analise'); // Vai para a aba de análise
+      document.getElementById('analysisSteps').style.display = 'none'; // Esconde os steps
+      document.getElementById('novaAnaliseForm').style.display = 'none'; // Esconde o formulário
+      
+      const resultadoDiv = document.getElementById('resultadoAnalise');
+      resultadoDiv.innerHTML = `<h2>Detalhes da Análise Salva</h2>`; // Adiciona um título
+      mostrarResultadoAnalise(analiseCompleta);
+
+      // Adiciona um botão para voltar ao formulário
+      resultadoDiv.innerHTML += `  
+<button class="btn btn-outline" onclick="resetNovaAnaliseView()">Fazer Nova Análise</button>`;
+    }
+
+    function resetNovaAnaliseView() {
+      document.getElementById('novaAnaliseForm').style.display = 'block';
+      document.getElementById('resultadoAnalise').innerHTML = '';
+      document.getElementById('analysisSteps').style.display = 'none';
+      // Reseta os ícones dos steps para o estado inicial
+      for(let i = 1; i <= 6; i++) {
+        const step = document.getElementById(`step${i}`);
+        if (step) {
+          const icon = step.querySelector('.step-icon');
+          icon.className = 'step-icon step-pending';
+          icon.innerHTML = i;
+        }
+      }
+    }
+
   </script>
 </body>
 </html>
